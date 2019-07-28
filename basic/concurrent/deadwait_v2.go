@@ -2,41 +2,50 @@ package main
 
 import (
 	"fmt"
-	"sync"
 )
 
+//WithSemaphore.go
 func main()  {
 	type Pk struct {
 		i int
 		gn string
 	}
-	c := make(chan Pk)
 
-	var wg sync.WaitGroup
-	wg.Add(2)
+	c := make(chan Pk, 2)
+	//wg.Add(2)
+	done := make(chan bool)
+
 
 	go func() {
-		wg.Add(1)
+		//wg.Add(1)
 		for i := 0; i < 10; i++ {
-			pk1 := Pk{i, "G1"}
-			c <- pk1
+			pk := Pk{i, "G1"}
+			c <- pk
 		}
 		fmt.Println("G1 done")
-		wg.Done()
+		//wg.Done()
+		done <- true
 	}()
 
 	go func() {
-		wg.Add(1)
+		//wg.Add(1)
 		for i := 0; i < 10; i++ {
-			pk2 := Pk{i, "G2"}
-			c <- pk2
+			pk := Pk{i, "G2"}
+			c <- pk
 		}
 		fmt.Println("G2 done")
-		wg.Done()
+		//wg.Done()
+		done <- true
 	}()
 
+	//go func() {
+	//	wg.Wait()
+	//	close(c)
+	//}()
+
 	go func() {
-		wg.Wait()
+		<-done
+		<-done
 		close(c)
 	}()
 
