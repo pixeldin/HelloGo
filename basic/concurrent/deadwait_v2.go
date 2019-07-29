@@ -5,17 +5,18 @@ import (
 )
 
 //WithSemaphore.go
+type Pk struct {
+	i int
+	gn string
+}
+
 func main()  {
-	type Pk struct {
-		i int
-		gn string
-	}
 
 	c := make(chan Pk, 2)
 	//wg.Add(2)
 	done := make(chan bool)
 
-
+	//G1
 	go func() {
 		//wg.Add(1)
 		for i := 0; i < 10; i++ {
@@ -27,6 +28,7 @@ func main()  {
 		done <- true
 	}()
 
+	//G2
 	go func() {
 		//wg.Add(1)
 		for i := 0; i < 10; i++ {
@@ -43,15 +45,21 @@ func main()  {
 	//	close(c)
 	//}()
 
-	go func() {
-		<-done
-		<-done
-		close(c)
-	}()
+	//go func() {
+	//	<-done
+	//	<-done
+	//	close(c)
+	//}()
+
+	//block here, unless below cover, but next won't cover cause above block G1, G2
+	<-done
+	<-done
+	close(c)
 
 
 	for n := range c {
 		fmt.Println("Pop chan with : ", n.gn, "i: ", n.i)
 	}
+
 
 }
