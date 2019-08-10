@@ -44,9 +44,11 @@ func (sr *simpleRobot) ReportError(err error) {
 	}
 */
 func (sr *simpleRobot) Hello(caller string) string {
+	// 假如肩负了具体使命, 则调用具体实现方法
 	if sr.duty != nil {
 		return sr.duty.Hello(caller)
 	}
+	//默认使命
 	return fmt.Sprintf("Hello " + caller + ", I'm " + sr.name)
 }
 
