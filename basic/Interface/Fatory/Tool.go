@@ -1,7 +1,11 @@
 package Fatory
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
+//通用使命: SayHello, Talk
 type Duty interface {
 	Hello(name string) string
 	Talk(order string) (string, bool, error)
@@ -11,9 +15,9 @@ type Duty interface {
 type Chatbot interface {
 	Name() string
 	Begin() (string, error)
-	//Talk 接口类型
+	//机器人的使命插槽, Duty 接口类型 (可由具体Duty接口实现来替换)
 	Duty
-	ReportError(err error) string
+	ReportError(err error)
 	End() error
 }
 
@@ -23,9 +27,7 @@ var chatbot = map[string]Chatbot{}
 //Common err
 var (
 	ErrInvalidChatBotName = errors.New("Invalid Chatbot Name")
-
 	ErrInvalidChatBot = errors.New("Invalid Chatbot")
-
 	ErrExistingChatBot = errors.New("Existing ChatBot")
 )
 
@@ -47,5 +49,12 @@ func Register(cb Chatbot) error {
 }
 
 func GetBot(name string) Chatbot {
-	return chatbot[name]
+	robot := chatbot[name]
+	if robot == nil{
+		fmt.Println("Sorry, can't find your robot." +
+			" We call a default Robot for you.")
+		return NewSimpleRobot("default", nil)
+	}
+	fmt.Println("Your robot is coming, ROBOT " + name)
+	return robot
 }
