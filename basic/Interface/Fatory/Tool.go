@@ -27,8 +27,8 @@ var chatbot = map[string]Chatbot{}
 //Common err
 var (
 	ErrInvalidChatBotName = errors.New("Invalid Chatbot Name")
-	ErrInvalidChatBot = errors.New("Invalid Chatbot")
-	ErrExistingChatBot = errors.New("Existing ChatBot")
+	ErrInvalidChatBot     = errors.New("Invalid Chatbot")
+	ErrExistingChatBot    = errors.New("Existing ChatBot")
 )
 
 //Register
@@ -37,11 +37,11 @@ func Register(cb Chatbot) error {
 		return ErrInvalidChatBot
 	}
 	name := cb.Name()
-	if name == ""{
+	if name == "" {
 		return ErrInvalidChatBotName
 	}
 	//name already exist
-	if _, ok := chatbot[name]; ok{
+	if _, ok := chatbot[name]; ok {
 		return ErrExistingChatBot
 	}
 	chatbot[name] = cb
@@ -50,9 +50,9 @@ func Register(cb Chatbot) error {
 
 func GetBot(name string) Chatbot {
 	robot := chatbot[name]
-	if robot == nil{
+	if robot == nil {
 		fmt.Println("Sorry, can't find your robot." +
-			" We call a default Robot for you.")
+			" We call a default implement robot for you.")
 		return NewSimpleRobot("default", nil)
 	}
 	fmt.Println("Your robot is coming, ROBOT " + name)
