@@ -56,7 +56,7 @@ func main() {
 		order := strings.ToLower(s)
 
 		response, end, err := robot.Talk(order)
-		if err != nil{
+		if err != nil {
 			robot.ReportError(err)
 		}
 		fmt.Println(response)
