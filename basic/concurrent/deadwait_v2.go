@@ -40,12 +40,12 @@ func main()  {
 		done <- true
 	}()
 
-	//go func() {
+	//go function() {
 	//	wg.Wait()
 	//	close(c)
 	//}()
 
-	//go func() {
+	//go function() {
 	//	<-done
 	//	<-done
 	//	close(c)

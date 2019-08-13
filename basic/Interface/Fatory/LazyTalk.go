@@ -15,6 +15,7 @@ import (
 type LazyDuty struct {
 }
 
+//通过指针类型实现的方法, 必须由指针类型来调用
 func (lt *LazyDuty) Hello(name string) string {
 	return fmt.Sprintf("你好... %s ! -- 来自 lazy talk. zzzZZZ...", name)
 }
