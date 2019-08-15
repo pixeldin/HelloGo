@@ -27,6 +27,7 @@ var (
 	ErrInterrupt = errors.New("received interrupt")
 )
 
+//初始化时候就执行倒计时
 func New(d time.Duration) *Runner {
 	return &Runner{
 		interrupt: make(chan os.Signal, 1),
