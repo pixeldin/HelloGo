@@ -11,6 +11,5 @@ target/
 */**/*.yml
 */**/*.iml
 */**/*.class
-main
 go.sum
 !.gitignore
