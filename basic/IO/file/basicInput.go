@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 )
 
@@ -43,9 +42,11 @@ func ReadFileAndWriteWithBuffer(path string, bufSize int) {
 	//Try to output into file
 	//ioutil.WriteFile("copy_dd.txt", buf, 0644)
 	//打开写入文件目标句柄
-	outputFile, outputError := os.OpenFile("copy_dd.txt", os.O_WRONLY|os.O_CREATE, 0666)
+	//outputFile, outputError := os.OpenFile("copy_dd.txt", os.O_WRONLY|os.O_CREATE, 0666)
+	//写入前truncate 文件
+	outputFile, outputError := os.OpenFile("copy_dd.txt", os.O_TRUNC|os.O_CREATE, 0666)
 	if outputError != nil {
-		fmt.Printf("An error occurred with file opening or creation\n")
+		fmt.Printf("An error occurred with file opening or creation, err: %s\n", outputError)
 		return
 	}
 	defer outputFile.Close()
@@ -72,7 +73,7 @@ func ReadFileAndWriteWithBuffer(path string, bufSize int) {
 	//	s, e := reader.ReadString('\n')
 	//	fmt.Printf("File data: %s", s)
 	//	//var databyte []byte = []byte(s)
-	ioutil.WriteFile("copy_dd.txt", databyte, 0644)
+	//ioutil.WriteFile("copy_dd.txt", databyte, 0644)
 	//
 	//	if e == io.EOF {
 	//		return
