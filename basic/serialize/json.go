@@ -43,4 +43,12 @@ func main() {
 	//writer := bufio.NewWriter(jf)
 	//writer.Write(js)
 	//writer.Flush()
+
+	//Todo... Decode demo
+	existFile, _ := os.OpenFile("vcard.json", os.O_CREATE|os.O_RDONLY, 0666)
+	defer existFile.Close()
+	dec := json.NewDecoder(existFile)
+	var dvc Address
+	dec.Decode(dvc)
+	fmt.Println(dvc)
 }
