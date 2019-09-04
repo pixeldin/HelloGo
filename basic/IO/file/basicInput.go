@@ -62,6 +62,7 @@ func ReadFileAndWriteWithBuffer(path string, bufSize int) {
 		if n <= bufSize {
 			buf = buf[0:n]
 		}
+		//handle file segment
 		fmt.Println("file data: " + string(buf))
 
 		//依次写入固定目标句柄

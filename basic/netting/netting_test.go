@@ -1,19 +1,25 @@
 package netting
 
 import (
+	"HelloGo/basic/netting/http"
+	"HelloGo/basic/netting/tcp"
 	"testing"
 )
 
 func TestListenAndServer(t *testing.T) {
-	ListenAndServer()
+	tcp.ListenAndServer()
 	//time.Sleep(3000)
 	//RegistAndSend()
 }
 
 func TestRegistAndSend(t *testing.T) {
-	RegistAndSend()
+	tcp.RegistAndSend()
 }
 
 func TestInputExa(t *testing.T) {
-	InputExa()
+	tcp.InputExa()
+}
+
+func TestStartHelloWithHttp(t *testing.T)  {
+	http.StartHelloWithHttp()
 }

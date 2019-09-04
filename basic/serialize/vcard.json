@@ -1,1 +1,2 @@
-{"FirstName":"Jim","LastName":"Black","Add":[{"Type":"A","City":"NewYork","Conuntry":"USA"},{"Type":"B","City":"BeiJing","Conuntry":"CNA"}],"Remark":"N"}
+{"FirstName":"Jim","LastName":"Black","Add":[{"Type":"A","Conuntry":"USA"},{"Type":"B","Conuntry":"CNA"}],"Remark":"N"}
+,"Conuntry":"CNA"}],"Remark":"N"}
