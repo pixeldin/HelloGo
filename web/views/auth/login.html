@@ -1,0 +1,63 @@
+{{define "auth/login"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+</head>
+
+<link rel="stylesheet" href="/static/style/admin.css" media="all">
+<link rel="stylesheet" href="/static/style/login.css" media="all">
+<link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+<script src="/static/layui/layui.js"></script>
+<script src="/static/script/jquery.min.js"></script>
+{{/*<script src="/static/script/common.js?ver={{.resVer}}"></script>*/}}
+
+<style>
+    .layui-btn-normal {
+        background-color: #bff7ff !important;
+    }
+</style>
+
+<title>Demo of view</title>
+    <body>
+{{/*        <h1>Pixelpigpigpig</h1>*/}}
+        <div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" >
+
+            <div class="layadmin-user-login-main">
+                <div class="layadmin-user-login-box layadmin-user-login-header">
+                    <h2>{{.sysTitle}} {{.runEnv}}</h2>
+                    <p>PVP平台</p>
+                </div>
+
+                <form method="post" action="{{.context}}/login">
+                    <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
+                        <div class="layui-form-item">
+                            <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+                            <input type="text" name="UserName" id="LAY-user-login-username"
+                                   value="a" lay-verify="required" placeholder="用户名" class="layui-input">
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
+                            <input type="password" name="Password" id="LAY-user-login-password"
+                                   value="123" lay-verify="required" placeholder="密码" class="layui-input">
+                        </div>
+                        <div class="layui-form-item" style="margin-bottom: 20px;">
+                            <input type="checkbox" id="remember" lay-skin="primary" title="记住用户名">
+
+                        </div>
+                        <div class="layui-form-item">
+                            <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登 入</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+    </body>
+</html>
+{{end}}
