@@ -10,7 +10,7 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo">layui 后台布局</div>
+        <div class="layui-logo">PVP数据平台</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
             <li class="layui-nav-item"><a href="">控制台</a></li>
@@ -69,7 +69,8 @@
 
     <div class="layui-body">
         <!-- 内容主体区域 -->
-        <div style="padding: 15px;">内容主体区域</div>
+{{/*        <div style="padding: 15px;">内容主体区域</div>*/}}
+        <table class="layui-hide" id="test"></table>
     </div>
 
     <div class="layui-footer">
@@ -78,6 +79,27 @@
     </div>
 </div>
 <script src="/static/layui/layui.js"></script>
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+
+        table.render({
+            elem: '#test'
+            ,url:'/demo/table/user/'
+            ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [[
+                {field:'matchType', width:'15%', title: 'Match Type', sort: true}
+                ,{field:'serverType', width:'15%', title: 'Server Type'}
+                ,{field:'SrcLog', width:'15%', title: 'Source Log', sort: true}
+                ,{field:'pvpResult', width:'15%', title: 'PVP Result'}
+                ,{field:'aggData', title: 'Match Detail/Replay', width: '30%', minWidth: 100} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                ,{field:'ckh', width:'15%', title: 'ClickHouse', sort: true}
+                ,{field:'date', width:'15%', title: 'Date', sort: true}
+            ]]
+        });
+    });
+</script>
+
 <script>
     //JavaScript代码区域
     layui.use('element', function(){
