@@ -11,5 +11,7 @@ target/
 */**/*.yml
 */**/*.iml
 */**/*.class
+/vendor/*
+!/vendor/vendor.json
 go.sum
 !.gitignore
