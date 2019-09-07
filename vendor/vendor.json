@@ -47,6 +47,18 @@
 			"revisionTime": "2019-08-27T17:58:35Z"
 		},
 		{
+			"checksumSHA1": "FdRzT7f5d5uekrpzlLCKxLIK3wQ=",
+			"path": "github.com/gorilla/securecookie",
+			"revision": "86450627d8e6b88e00ea41f228489b89d08a40de",
+			"revisionTime": "2019-07-07T03:38:17Z"
+		},
+		{
+			"checksumSHA1": "MvAhNXI9Z/zVzuAYjuKLY0PPQO4=",
+			"path": "github.com/gorilla/sessions",
+			"revision": "9c6b24ee2dee928836dbf71f18bb0c7d0da4bf85",
+			"revisionTime": "2019-07-20T20:21:36Z"
+		},
+		{
 			"checksumSHA1": "4DgEcOv2o9NyZAHCbdS76mToqpU=",
 			"path": "github.com/json-iterator/go",
 			"revision": "27518f6661eba504be5a7a9a9f6d9460d892ade3",
