@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"HelloGo/web/common"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/sessions"
 	"net/http"
 )
 
@@ -18,8 +20,22 @@ func Login(c *gin.Context) {
 	var pwd = c.DefaultPostForm("Password", "")
 
 	if userName == "a" && pwd == "123" {
-		//redirect to index
-		//c.Redirect(http.StatusFound, "https://www.baidu.com")
+		//auth pass, save to session and redirect to index
+		//sion, ok := c.Get("pvpSession")
+		session := common.GetSession(c, "pvpMgr")
+		//if ok {
+		//	session := sion.(*sessions.Session)
+			//fixme: turn into something else
+			session.Values["user"] = userName
+			session.Options = &sessions.Options{
+				Path: "/",
+				//session expire time
+				MaxAge: 300,
+				HttpOnly:true,
+			}
+			session.Save(c.Request, c.Writer)
+		//}
+
 		c.Redirect(http.StatusMovedPermanently, "manager/index")
 	} else {
 		c.JSON(200, gin.H{

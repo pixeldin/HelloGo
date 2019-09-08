@@ -1,14 +1,12 @@
 package main
 
 import (
+	"HelloGo/web/common"
 	"HelloGo/web/controller"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/sessions"
 	"net/http"
 )
-
-var store = sessions.NewCookieStore([]byte("sessionkey"))
 
 func main() {
 	r := gin.Default()
@@ -35,21 +33,21 @@ func registerRouter(g *gin.RouterGroup) {
 }
 
 func HomePage(c *gin.Context) {
-	session, e := store.Get(c.Request, "pvpMgr")
-	c.Set("pvpSession", session)
-	if e != nil {
-		fmt.Println("Get session err:", e)
+	session := common.GetSession(c, "pvpMgr")
+	if session == nil {
+		c.Abort()
+		common.Logging("Create session failed.")
 		return
 	}
 	h := gin.H{}
-	//if got user from session
 	user := session.Values["user"]
-	if user.(string) == "" {
+	if user == nil {
+		//if unauthorized
 		fmt.Println("Nil user from session, redirect to login")
 		c.HTML(http.StatusFound, "auth/login", h)
 	} else {
+		fmt.Println("=====================Redirect with old session=====================")
 		//jump to main page
 		c.Redirect(http.StatusMovedPermanently, "manager/index")
 	}
-	//if unauthorized
 }

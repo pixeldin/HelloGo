@@ -15,6 +15,7 @@ func RegisterAdminRouter(group *gin.RouterGroup) {
 
 func Index(ctx *gin.Context) {
 	h := gin.H{}
+	//TODO:// 拦截器...
 	//session, exists := ctx.Get("pvpSession")
 	//if !exists {
 	//	fmt.Println("Nil session...")
