@@ -18,7 +18,7 @@ func NewPool(addr string) *redis.Pool  {
 }
 
 func init()  {
-	pool = NewPool("10.11.165.44:6379")
+	pool = NewPool("127.0.0.1:6379")
 }
 
 func GetRedisConn() redis.Conn {

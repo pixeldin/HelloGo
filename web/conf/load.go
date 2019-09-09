@@ -7,12 +7,12 @@ import (
 
 
 const (
-	EXT = "pvp"
-	REDIS_CONF = "redis"
+	EXT      = "pvp"
+	CONF_KEY = "redis"
 )
 
 func init()  {
-	configs, ok := conf.GetSlice(REDIS_CONF)
+	configs, ok := conf.GetSlice(CONF_KEY)
 	if !ok || len(configs) == 0 {
 		return
 	}
