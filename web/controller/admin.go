@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"HelloGo/web/common"
+	"HelloGo/web/constant"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	//"github.com/gorilla/sessions"
 	"net/http"
@@ -13,21 +16,23 @@ func RegisterAdminRouter(group *gin.RouterGroup) {
 	}
 }
 
-func Index(ctx *gin.Context) {
+func Index(c *gin.Context) {
+	//Session 拦截器
+	session := common.GetSession(c, constant.SESSION_GLOBAL)
+	if session == nil {
+		c.Abort()
+		common.Logging("Create session failed.")
+		return
+	}
 	h := gin.H{}
-	//TODO:// 拦截器...
-	//session, exists := ctx.Get("pvpSession")
-	//if !exists {
-	//	fmt.Println("Nil session...")
-	//	return
-	//}
-	//if got user from session
-	//s := session.(Session)
-	//user := session.Values["user"]
-	//if user.(string) == "" {
-	//	fmt.Println("Nil user from session, redirect to login")
-	//	c.HTML(http.StatusFound, "auth/login", h)
-	//}
-	//if unauthorized
-	ctx.HTML(http.StatusFound, "manager/index", h)
+	user := session.Values[constant.SESSION_USER]
+	if user == nil {
+		//if unauthorized
+		fmt.Println("Nil user from session, redirect to login")
+		c.HTML(http.StatusFound, "auth/login", h)
+	} else {
+		fmt.Println("=====================Redirect with old session=====================")
+		//jump to main page
+		c.HTML(http.StatusFound, "manager/index", h)
+	}
 }

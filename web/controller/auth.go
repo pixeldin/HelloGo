@@ -2,6 +2,7 @@ package controller
 
 import (
 	"HelloGo/web/common"
+	"HelloGo/web/constant"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"net/http"
@@ -22,11 +23,11 @@ func Login(c *gin.Context) {
 	if userName == "a" && pwd == "123" {
 		//auth pass, save to session and redirect to index
 		//sion, ok := c.Get("pvpSession")
-		session := common.GetSession(c, "pvpMgr")
+		session := common.GetSession(c, constant.SESSION_GLOBAL)
 		//if ok {
 		//	session := sion.(*sessions.Session)
 			//fixme: turn into something else
-			session.Values["user"] = userName
+			session.Values[constant.SESSION_USER] = userName
 			session.Options = &sessions.Options{
 				Path: "/",
 				//session expire time

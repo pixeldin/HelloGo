@@ -1,9 +1,7 @@
 package main
 
 import (
-	"HelloGo/web/common"
 	"HelloGo/web/controller"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -33,21 +31,5 @@ func registerRouter(g *gin.RouterGroup) {
 }
 
 func HomePage(c *gin.Context) {
-	session := common.GetSession(c, "pvpMgr")
-	if session == nil {
-		c.Abort()
-		common.Logging("Create session failed.")
-		return
-	}
-	h := gin.H{}
-	user := session.Values["user"]
-	if user == nil {
-		//if unauthorized
-		fmt.Println("Nil user from session, redirect to login")
-		c.HTML(http.StatusFound, "auth/login", h)
-	} else {
-		fmt.Println("=====================Redirect with old session=====================")
-		//jump to main page
-		c.Redirect(http.StatusMovedPermanently, "manager/index")
-	}
+	c.Redirect(http.StatusMovedPermanently, "manager/index")
 }
