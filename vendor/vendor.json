@@ -47,6 +47,12 @@
 			"revisionTime": "2019-08-27T17:58:35Z"
 		},
 		{
+			"checksumSHA1": "0Z5fQuQTlF3VlgBOHtUINlZO0fA=",
+			"path": "github.com/gomodule/redigo/redis",
+			"revision": "d3876d43bbbeb98b4d67309b4d3eef49438ef74c",
+			"revisionTime": "2019-07-28T19:03:53Z"
+		},
+		{
 			"checksumSHA1": "FdRzT7f5d5uekrpzlLCKxLIK3wQ=",
 			"path": "github.com/gorilla/securecookie",
 			"revision": "86450627d8e6b88e00ea41f228489b89d08a40de",
@@ -81,6 +87,12 @@
 			"path": "github.com/modern-go/reflect2",
 			"revision": "94122c33edd36123c84d5368cfb2b69df93a0ec8",
 			"revisionTime": "2018-07-18T01:23:57Z"
+		},
+		{
+			"checksumSHA1": "8Fr2yl/KdWWZfow/Yl/5tx4xxwg=",
+			"path": "github.com/obase/conf",
+			"revision": "12d4d79d44808cd0c5b631c3968530c08099f545",
+			"revisionTime": "2019-08-06T08:10:53Z"
 		},
 		{
 			"checksumSHA1": "JWmqQjxnUg8PRe1QfYCmzAcWDvM=",
