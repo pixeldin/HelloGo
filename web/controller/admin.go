@@ -5,7 +5,6 @@ import (
 	"HelloGo/web/constant"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	//"github.com/gorilla/sessions"
 	"net/http"
 )
 

@@ -5,11 +5,11 @@ import (
 	"github.com/obase/conf"
 )
 
-
 const (
 	EXT      = "pvp"
 	CONF_KEY = "redis"
 )
+
 
 func init()  {
 	configs, ok := conf.GetSlice(CONF_KEY)
@@ -17,13 +17,13 @@ func init()  {
 		return
 	}
 	for _, config := range configs {
-		key1, ok := conf.ElemString(config, "key")
+		addr, ok := conf.ElemString(config, "address")
 		if ok {
-			fmt.Println(key1)
+			fmt.Println(addr)
 		}
-		key2, ok := conf.ElemString(config, "address")
+		pwd, ok := conf.ElemString(config, "password")
 		if ok {
-			fmt.Println(key2)
+			fmt.Println(pwd)
 		}
 
 	}

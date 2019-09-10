@@ -1,9 +1,20 @@
 package db
 
 import (
+	"fmt"
 	"github.com/gomodule/redigo/redis"
+	"github.com/obase/conf"
 	"time"
 )
+
+const CONF_KEY  = "redis"
+
+type RedisConf struct {
+	address string
+	pwd string
+}
+
+var rc RedisConf
 
 var pool *redis.Pool
 
@@ -18,9 +29,30 @@ func NewPool(addr string) *redis.Pool  {
 }
 
 func init()  {
-	pool = NewPool("127.0.0.1:6379")
+	configs, ok := conf.GetSlice(CONF_KEY)
+	if !ok || len(configs) == 0 {
+		return
+	}
+	for _, config := range configs {
+		addr, ok := conf.ElemString(config, "address")
+		if ok {
+			rc.address = addr
+		}
+		pwd, ok := conf.ElemString(config, "password")
+		if ok {
+			rc.pwd = pwd
+		}
+
+	}
+	pool = NewPool(rc.address)
 }
 
 func GetRedisConn() redis.Conn {
-	return pool.Get()
+	conn := pool.Get()
+	_, err := conn.Do("AUTH", rc.pwd)
+	if err != nil {
+		fmt.Println("Get redis conn failed, err:", err)
+		return nil
+	}
+	return conn
 }

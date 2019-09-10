@@ -2,8 +2,8 @@ package db
 
 import (
 	"HelloGo/web/common"
-	"github.com/gomodule/redigo/redis"
 	"fmt"
+	"github.com/gomodule/redigo/redis"
 	"testing"
 )
 
@@ -13,9 +13,6 @@ func TestGetRedisConn(t *testing.T) {
 
 	conn.Do("AUTH", "pixelpig")
 	value, e := redis.String(conn.Do("get", "pixel"))
-	if e != nil {
-		common.Logging(common.ErrCheck("Redis execute err", e))
-		return
-	}
+	common.Logging(common.ErrCheck("Redis execute err", e))
 	fmt.Println((value))
 }
