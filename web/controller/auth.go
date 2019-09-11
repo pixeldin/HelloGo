@@ -22,20 +22,16 @@ func Login(c *gin.Context) {
 
 	if userName == "a" && pwd == "123" {
 		//auth pass, save to session and redirect to index
-		//sion, ok := c.Get("pvpSession")
 		session := common.GetSession(c, constant.SESSION_GLOBAL)
-		//if ok {
-		//	session := sion.(*sessions.Session)
-			//fixme: turn into something else
-			session.Values[constant.SESSION_USER] = userName
-			session.Options = &sessions.Options{
-				Path: "/",
-				//session expire time
-				MaxAge: 300,
-				HttpOnly:true,
-			}
-			session.Save(c.Request, c.Writer)
-		//}
+		//fixme: turn into something else
+		session.Values[constant.SESSION_USER] = userName
+		session.Options = &sessions.Options{
+			Path: "/",
+			//session expire time
+			MaxAge:   300,
+			HttpOnly: true,
+		}
+		session.Save(c.Request, c.Writer)
 
 		c.Redirect(http.StatusMovedPermanently, "manager/index")
 	} else {

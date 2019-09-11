@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"github.com/obase/conf"
 	"time"
@@ -47,12 +46,11 @@ func init()  {
 	pool = NewPool(rc.address)
 }
 
-func GetRedisConn() redis.Conn {
-	conn := pool.Get()
-	_, err := conn.Do("AUTH", rc.pwd)
+func GetRedisConn() (conn redis.Conn, err error){
+	conn = pool.Get()
+	_, err = conn.Do("AUTH", rc.pwd)
 	if err != nil {
-		fmt.Println("Get redis conn failed, err:", err)
-		return nil
+		return nil, err
 	}
-	return conn
+	return conn, nil
 }

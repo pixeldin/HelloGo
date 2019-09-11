@@ -2,17 +2,23 @@ package db
 
 import (
 	"HelloGo/web/common"
-	"fmt"
 	"github.com/gomodule/redigo/redis"
+	"github.com/sirupsen/logrus"
 	"testing"
 )
 
 func TestGetRedisConn(t *testing.T) {
-	conn := GetRedisConn()
-	defer conn.Close()
+	conn, e := GetRedisConn()
+	if conn != nil {
+		defer conn.Close()
+	}
+	if e != nil {
+		logrus.Error("Get redis conn failed, err: ", e)
+		return
+	}
 
-	conn.Do("AUTH", "pixelpig")
 	value, e := redis.String(conn.Do("get", "pixel"))
-	common.Logging(common.ErrCheck("Redis execute err", e))
-	fmt.Println((value))
+	if !common.LoggingErr(common.ErrCheck("Redis execute err", e)) {
+		common.Infof("Get pixel value:", value)
+	}
 }

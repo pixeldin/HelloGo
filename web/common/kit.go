@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
+	log "github.com/sirupsen/logrus"
 )
 
 var store *sessions.CookieStore
@@ -33,9 +34,9 @@ func GetSession(c *gin.Context, key string) *sessions.Session {
 		//	HttpOnly: true,
 		//}
 		//session.Save(c.Request, c.Writer)
-		fmt.Println("=====================New session=====================")
+		log.Debug("=====================New session=====================")
 	} else {
-		fmt.Println("=====================Get from old session=====================")
+		log.Debug("=====================Get from old session=====================")
 	}
 	Logging(ErrCheck("Get session", e))
 	return session
@@ -47,14 +48,29 @@ func GetSession(c *gin.Context, key string) *sessions.Session {
 
 func ErrCheck(formatString string, err error) string {
 	if err != nil {
-		return fmt.Sprintf("Error occured with: %s, err: %s", formatString, err)
+		return fmt.Sprintf("Error occured with <%s>, err: %s", formatString, err)
 	}
 	return ""
 }
 
-func Logging(value string) {
+func Logging(value string) bool {
 	if value != "" {
 		//maybe import log tools
-		fmt.Println(value)
+		log.Info(value)
+		return true
 	}
+	return false
+}
+
+func LoggingErr(value string) bool {
+	if value != "" {
+		//maybe import log tools
+		log.Error(value)
+		return true
+	}
+	return false
+}
+
+func Infof(msg string, val ...interface{})  {
+	log.Info(msg, val)
 }
