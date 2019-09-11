@@ -41,7 +41,7 @@
 			"versionExact": "v1.3.0"
 		},
 		{
-			"checksumSHA1": "ggMlbTVDDEKzO2VQeqhjLqXfeQc=",
+			"checksumSHA1": "C8nYObwbo2oyODQbIT83lY37ajM=",
 			"path": "github.com/golang/protobuf/proto",
 			"revision": "822fe56949f5d56c9e2f02367c657e0e9b4d27d1",
 			"revisionTime": "2019-08-27T17:58:35Z"

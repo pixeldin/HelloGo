@@ -13,6 +13,7 @@ func RegisterAdminRouter(group *gin.RouterGroup) {
 	{
 		a.GET("/index", Index)
 		a.GET("/mockdata", MatchData)
+		a.GET("/graph", GraphList)
 	}
 }
 
@@ -44,6 +45,7 @@ type matchSum struct {
 } 
 
 func MatchData(context *gin.Context) {
+	//TODO: Session auth
 	msa := []matchSum{}
 	ms := matchSum{3, "c", 1000}
 	ms2 := matchSum{2, "c", 10000}
@@ -63,4 +65,10 @@ func MatchData(context *gin.Context) {
 		//"ckh": 10,
 		//"date": "2019/09/11",
 	})
+}
+
+func GraphList(ctx *gin.Context)  {
+	//TODO: Session auth
+	h := gin.H{}
+	ctx.HTML(http.StatusFound, "manager/graph", h)
 }
