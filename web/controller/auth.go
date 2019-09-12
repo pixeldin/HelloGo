@@ -20,7 +20,7 @@ func Login(c *gin.Context) {
 	var userName = c.DefaultPostForm("UserName", "defaultUser")
 	var pwd = c.DefaultPostForm("Password", "")
 
-	if userName == "a" && pwd == "123" {
+	if userName == "pixeldin" && pwd == "123" {
 		//auth pass, save to session and redirect to index
 		session := common.GetSession(c, constant.SESSION_GLOBAL)
 		//fixme: turn into something else

@@ -14,6 +14,7 @@ func RegisterAdminRouter(group *gin.RouterGroup) {
 		a.GET("/index", Index)
 		a.GET("/mockdata", MatchData)
 		a.GET("/graph", GraphList)
+		a.GET("/summary", SummaryTable)
 	}
 }
 
@@ -34,6 +35,7 @@ func Index(c *gin.Context) {
 	} else {
 		logrus.Debug("=====================Redirect with old session=====================")
 		//jump to main page
+		h["user"] = user.(string)
 		c.HTML(http.StatusFound, "manager/index", h)
 	}
 }
@@ -65,6 +67,11 @@ func MatchData(context *gin.Context) {
 		//"ckh": 10,
 		//"date": "2019/09/11",
 	})
+}
+
+func SummaryTable(ctx *gin.Context)  {
+	h := gin.H{}
+	ctx.HTML(http.StatusFound, "manager/summary", h)
 }
 
 func GraphList(ctx *gin.Context)  {
