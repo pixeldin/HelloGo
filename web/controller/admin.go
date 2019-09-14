@@ -23,7 +23,7 @@ func Index(c *gin.Context) {
 	session := common.GetSession(c, constant.SESSION_GLOBAL)
 	if session == nil {
 		c.Abort()
-		common.Logging("Create session failed.")
+		logrus.Error("Create session failed.")
 		return
 	}
 	h := gin.H{}
