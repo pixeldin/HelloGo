@@ -23,17 +23,17 @@ func Index(c *gin.Context) {
 	session := common.GetSession(c, constant.SESSION_GLOBAL)
 	if session == nil {
 		c.Abort()
-		common.Logging("Create session failed.")
+		logrus.Error("Create session failed.")
 		return
 	}
 	h := gin.H{}
 	user := session.Values[constant.SESSION_USER]
 	if user == nil {
 		//if unauthorized
-		logrus.Debug("Nil user from session, redirect to login")
+		logrus.Info("Nil user from session, redirect to login")
 		c.HTML(http.StatusFound, "auth/login", h)
 	} else {
-		logrus.Debug("=====================Redirect with old session=====================")
+		logrus.Info("=====================Redirect with old session=====================")
 		//jump to main page
 		h["user"] = user.(string)
 		c.HTML(http.StatusFound, "manager/index", h)
@@ -41,10 +41,10 @@ func Index(c *gin.Context) {
 }
 
 type matchSum struct {
-	MatchType int `json:"matchType"`
+	MatchType  int    `json:"matchType"`
 	ServerType string `json:"serverType"`
-	SrcLog int  `json:"srcLog"`
-} 
+	SrcLog     int    `json:"srcLog"`
+}
 
 func MatchData(context *gin.Context) {
 	//TODO: Session auth
@@ -54,9 +54,9 @@ func MatchData(context *gin.Context) {
 	msa = append(msa, ms)
 	msa = append(msa, ms2)
 	context.JSON(200, gin.H{
-		"code":0,
-		"msg":"mock something data.",
-		"count":10,
+		"code":  0,
+		"msg":   "mock something data.",
+		"count": 10,
 		//"data": "[{'matchType':3, 'serverType':'c'},{'SrcLog':1000}]",
 		"data": msa,
 		//"matchType": 3,
@@ -69,12 +69,12 @@ func MatchData(context *gin.Context) {
 	})
 }
 
-func SummaryTable(ctx *gin.Context)  {
+func SummaryTable(ctx *gin.Context) {
 	h := gin.H{}
 	ctx.HTML(http.StatusFound, "manager/summary", h)
 }
 
-func GraphList(ctx *gin.Context)  {
+func GraphList(ctx *gin.Context) {
 	//TODO: Session auth
 	h := gin.H{}
 	ctx.HTML(http.StatusFound, "manager/graph", h)
