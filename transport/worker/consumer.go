@@ -7,8 +7,8 @@ import (
 
 func Consume(CNum int, msg chan []byte)  {
 	for value := range msg {
-		logrus.Infof("# Consumer CNum.%d, take cake, value: %s.", CNum, string(value))
 		//Add time costing
-		time.Sleep(2000)
+		time.Sleep(2 * time.Second)
+		logrus.Infof("# Consumer CNum.%d, take cake with value: %s.", CNum, string(value))
 	}
 }

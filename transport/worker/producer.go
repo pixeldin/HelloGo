@@ -6,12 +6,12 @@ import (
 	"time"
 )
 
-func Produce(PNum int, msg chan []byte, signal <-chan int)  {
+func Produce(PNum int, msg chan []byte, signal <-chan int) {
 	//周期生产
 	PeriodJob(msg, signal, func() {
-		Infof("## Producer PNum.%d, push a cake.", PNum)
-		cake := []byte(fmt.Sprintf("Cake, tag: %v", time.Now()))
+		cake := []byte(fmt.Sprintf("cake, @tag: PNum.%d", PNum))
 		msg <- cake
+		Infof("## Producer push a %s", cake)
 	})
 }
 
