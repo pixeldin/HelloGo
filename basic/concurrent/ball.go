@@ -40,7 +40,9 @@ func player(name string, court chan int)  {
 		n := rand.Intn(100)
 		if n % 7 == 0 {
 			fmt.Println("Player ", name, "lost key point...")
-			close(court)
+			//close(court)
+			//lead the goroutine
+			panic(court)
 			return
 		}
 		fmt.Println("Player ", name, "Hit ", ball)
