@@ -21,7 +21,7 @@ func main() {
 	fmt.Println("Never come here.")
 }
 
-func TypeDemo()  {
+func TypeDemo() {
 	sde := SelfDefineErr{"errMsg", 1}
 	var sd, sdp interface{} = sde, &sde
 	fmt.Println("SelfDefineErr's " + sd.(SelfDefineErr).errMsg)
