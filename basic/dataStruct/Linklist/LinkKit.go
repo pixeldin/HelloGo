@@ -4,7 +4,7 @@ import "fmt"
 
 /*
 	单链表操作
- */
+*/
 
 //链表节点, 下一个成员地址/当前value
 type LinkNode struct {
@@ -26,7 +26,7 @@ func InitLinklist() *LinkList {
 	return ll
 }
 
-func (l *LinkList) IsEmptyList() bool{
+func (l *LinkList) IsEmptyList() bool {
 	return l.length == 1
 }
 
@@ -47,11 +47,11 @@ func (l *LinkList) Add(node *LinkNode) {
 }
 
 //在节点前添加
-func (l *LinkList) AddBefore(node *LinkNode, v interface{})  {
+func (l *LinkList) AddBefore(node *LinkNode, v interface{}) {
 
 }
 
-func (l *LinkList) AddAfter(node *LinkNode, v interface{})  {
+func (l *LinkList) AddAfter(node *LinkNode, v interface{}) {
 
 }
 
@@ -95,16 +95,32 @@ func (l *LinkList) GetNode(value interface{}) *LinkNode {
 }
 
 /*
-	Extend
- */
-//链表反转
-func (l *LinkList) ReverseLinkList() {
+	链表反转
+*/
+// 方式1: 遍历原链表, 在新创建链表头结点之后逐个插入.
+func (l *LinkList) ReverseLinkListByNewLink() (nl *LinkList){
 	if l.IsEmptyList() {
 		return
 	}
+	nl = InitLinklist()
+	// head/st ->  -> next
 	st := l.head
 	for st.next != nil {
+		ln := new(LinkNode)
+		ln.value = st.next.value
 
+		old := nl.head.next
+		//if old != nil {
+		ln.next = old
+		//}
+		nl.head.next = ln
+		nl.length++
+
+		st = st.next
 	}
-	l.head = st
+	return nl
+}
+//方式2: 就地反转
+func (l *LinkList) ReverseLinkList()  {
+
 }

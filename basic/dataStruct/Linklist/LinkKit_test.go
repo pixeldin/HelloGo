@@ -15,7 +15,8 @@ func TestLinkList_TravelLinkList(t *testing.T) {
 
 	//ll.GetNode(2)
 
-	ll.ReverseLinkList()
+	ll = ll.ReverseLinkListByNewLink()
 	ll.TravelLinkList()
 
 }
+
