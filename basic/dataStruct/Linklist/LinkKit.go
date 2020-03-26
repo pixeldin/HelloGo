@@ -120,7 +120,26 @@ func (l *LinkList) ReverseLinkListByNewLink() (nl *LinkList){
 	}
 	return nl
 }
-//方式2: 就地反转
-func (l *LinkList) ReverseLinkList()  {
+//方式2: 除去头结点, 从第二个节点开始遍历, 插入头结点后面
+func (l *LinkList) ReverseLinkListLocal()  {
+	if l.IsEmptyList() || l.length == 1 {
+		return
+	}
+	ft := l.head.next
+	for ft != nil {
+		//待迁节点
+		nex := CopyNode(ft.next)
+		//跳过迁移节点
+		ft.next = nex.next
+		//迁移至头节点之后
+		nex.next = l.head.next
+		l.head.next = nex
+	}
+}
 
+func CopyNode(l *LinkNode) *LinkNode {
+	nn := new(LinkNode)
+	nn.next = l.next
+	nn.value = l.value
+	return nn
 }
