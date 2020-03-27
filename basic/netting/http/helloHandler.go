@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
 const form = `
@@ -17,9 +18,12 @@ const form = `
 	</html>
 `
 
-type HelloHandler struct{}
+type HelloHandler struct {
 
-func ServeHTTP(w http.ResponseWriter, r *http.Request) {
+}
+
+
+func ( HelloHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprint(w, "<h1>Hello!</h1>")
 }
 
@@ -35,7 +39,16 @@ func FormServer(w http.ResponseWriter, request *http.Request) {
 
 func StartHelloWithHttp() {
 	//var h HelloHandler
-	http.HandleFunc("/t1", FormServer)
-	http.HandleFunc("/t2", ServeHTTP)
-	http.ListenAndServe(":8000", nil)
+	//http.HandleFunc("/t1", FormServer)
+	//http.ListenAndServe(":8000", nil)
+
+	hh := HelloHandler{}
+	s := &http.Server{
+		Addr:           ":8080",
+		Handler:        hh,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+	s.ListenAndServe()
 }

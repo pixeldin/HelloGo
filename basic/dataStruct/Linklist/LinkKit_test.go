@@ -1,6 +1,10 @@
 package Linklist
 
-import "testing"
+import (
+	"fmt"
+	"strings"
+	"testing"
+)
 
 func TestLinkList_TravelLinkList(t *testing.T) {
 	ll := InitLinklist()
@@ -24,3 +28,10 @@ func TestLinkList_TravelLinkList(t *testing.T) {
 
 }
 
+func TestStringsRepeat(t *testing.T)  {
+	repeat := strings.Repeat("/:param", 2)
+	fmt.Println(repeat)
+	const maxParamCount uint8 = ^uint8(0)
+
+	fmt.Println(maxParamCount)
+}
