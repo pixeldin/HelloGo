@@ -1,6 +1,9 @@
 package Linklist
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestLinkList_TravelLinkList(t *testing.T) {
 	ll := InitLinklist()
@@ -13,12 +16,26 @@ func TestLinkList_TravelLinkList(t *testing.T) {
 	ll.Add(l3)
 	ll.Add(l4)
 
+	//l4.next = l2
+	cl := ll.IsCircle()
+	if cl {
+		fmt.Println("是个环链表.")
+	} else {
+		fmt.Println("不是环链表.")
+	}
+	//ll.Add(l4)
+
+	fmt.Println("=========\n原链表: ")
 	ll.TravelLinkList()
+
 
 	//ll.GetNode(2)
 
-	//ll = ll.ReverseLinkListByNewLink()
-	//ll.TravelLinkList()
+	fmt.Println("反转1: ")
+	ll = ll.ReverseLinkListByNewLink()
+	ll.TravelLinkList()
+
+	fmt.Println("反转2: ")
 	ll.ReverseLinkListLocal()
 	ll.TravelLinkList()
 

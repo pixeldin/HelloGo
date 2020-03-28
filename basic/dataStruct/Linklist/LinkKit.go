@@ -1,6 +1,8 @@
 package Linklist
 
-import "fmt"
+import (
+	"fmt"
+)
 
 /*
 	单链表操作
@@ -39,9 +41,9 @@ func (l *LinkList) Add(node *LinkNode) {
 			cur = cur.next
 		}
 
-		tmp := cur.next
+		//tmp := cur.next
 		cur.next = node
-		node.next = tmp
+		//node.next = tmp
 	}
 	l.length++
 }
@@ -94,6 +96,44 @@ func (l *LinkList) GetNode(value interface{}) *LinkNode {
 	return nil
 }
 
+func CopyNodeValue(l *LinkNode) *LinkNode {
+	nn := new(LinkNode)
+	nn.next = nil
+	nn.value = l.value
+	return nn
+}
+
+/*
+	判断链表是否存在环
+	快慢指针法, 指针一移动速度为1,指针二移动速度为2,
+	当指针一追上指针二且非空时, 则链表存在环
+	//应用:
+	//如计算有序链表的中位数,
+		- 当指针二刚好到达尾部, 则链表为奇数个, 指针一为中位数
+		- 当指针二到达尾部前一个节点, 则链表为偶数个,
+          指针一与下一节点求和均分为中位数
+ */
+func (l *LinkList)IsCircle() (cl bool) {
+	cl = false
+	if l.IsEmptyList() {
+		return
+	}
+	p1 := l.head.next
+	p2 := l.head.next.next
+	for p2 != nil && p2.next != nil {
+		if p1 == p2 {
+			return true
+		}
+		//if p1.next == nil || p2.next == nil || p2.next.next == nil {
+		//	return
+		//}
+		p1 = p1.next
+		p2 = p2.next.next
+	}
+	return
+}
+
+
 /*
 	链表反转
 */
@@ -106,8 +146,9 @@ func (l *LinkList) ReverseLinkListByNewLink() (nl *LinkList){
 	// head/st ->  -> next
 	st := l.head
 	for st.next != nil {
-		ln := new(LinkNode)
-		ln.value = st.next.value
+		ln := CopyNodeValue(st.next)
+		//ln := new(LinkNode)
+		//ln.value = st.next.value
 
 		old := nl.head.next
 		//if old != nil {
@@ -125,21 +166,20 @@ func (l *LinkList) ReverseLinkListLocal()  {
 	if l.IsEmptyList() || l.length == 1 {
 		return
 	}
-	ft := l.head.next
-	for ft != nil {
-		//待迁节点
-		nex := CopyNode(ft.next)
-		//跳过迁移节点
-		ft.next = nex.next
-		//迁移至头节点之后
-		nex.next = l.head.next
-		l.head.next = nex
+	cur := l.head.next
+	for cur.next != nil {
+		nxVal := CopyNodeValue(cur.next)
+		cur.next = cur.next.next
+
+		//insert after head
+		nxVal.next = l.head.next
+		l.head.next = nxVal
 	}
 }
 
-func CopyNode(l *LinkNode) *LinkNode {
-	nn := new(LinkNode)
-	nn.next = l.next
-	nn.value = l.value
-	return nn
+//TODO:...方式3: 递归反转
+func ReverseRecursive()  {
+	//ReverseRecursive()
 }
+
+
