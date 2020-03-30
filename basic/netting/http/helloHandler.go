@@ -23,7 +23,7 @@ type HelloHandler struct {
 }
 
 
-func ( HelloHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (* HelloHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprint(w, "<h1>Hello!</h1>")
 }
 
@@ -42,10 +42,9 @@ func StartHelloWithHttp() {
 	//http.HandleFunc("/t1", FormServer)
 	//http.ListenAndServe(":8000", nil)
 
-	hh := HelloHandler{}
 	s := &http.Server{
 		Addr:           ":8080",
-		Handler:        hh,
+		Handler:        &HelloHandler{},
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
