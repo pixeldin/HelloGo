@@ -12,8 +12,9 @@ func main() {
 	for i := 0; i < 4; i++ {
 		//LeakSomeRoutine()
 		FixLeakingByContex()
-		//异步清理协程
+		//给它点时间 异步清理协程
 		time.Sleep(100)
+
 		fmt.Printf("#Goroutines in roop end: %d.\n", runtime.NumGoroutine())
 	}
 }
@@ -38,9 +39,12 @@ func LeakSomeRoutine() int {
 }
 
 func FixLeakingByContex() {
-
 	//创建上下文用于管理子协程
 	ctx, cancel := context.WithCancel(context.Background())
+
+	//结束前清理未结束协程
+	defer cancel()
+
 	ch := make(chan int)
 	go CancelByContext(ctx, ch)
 	go CancelByContext(ctx, ch)
@@ -48,8 +52,6 @@ func FixLeakingByContex() {
 
 	// 触发某个子协程退出
 	ch <- 1
-	//清理未结束协程
-	defer cancel()
 }
 
 func CancelByContext(ctx context.Context, ch chan (int)) int {
