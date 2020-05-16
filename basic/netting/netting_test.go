@@ -58,7 +58,18 @@ func TestHttpRouter(t *testing.T) {
 	router := httprouter.New()
 
 	routed := false
-	router.Handle(http.MethodGet, "/user/:name", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	router.Handle("GET", "/user/ikbc", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		//do nothing
+	})
+	router.Handle("GET", "/user/ikbcd", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		//do nothing
+	})
+	router.Handle("GET", "/user/abc/:id", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		//do nothing
+		ps.ByName("id")
+	})
+
+	router.Handle(http.MethodGet, "/pixel/:name", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		routed = true
 		want := httprouter.Params{httprouter.Param{"name", "gopher"}}
 		if !reflect.DeepEqual(ps, want) {
