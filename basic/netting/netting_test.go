@@ -2,6 +2,7 @@ package netting
 
 import (
 	"HelloGo/basic/netting/tcp"
+	"context"
 	"errors"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
@@ -54,22 +55,82 @@ func assert(ok bool, err error) {
 	}
 }
 
+func TestContext(t *testing.T) {
+	// 获取顶级上下文
+	ctx := context.Background()
+	// 在上下文写入值, 注意需要返回新的value上下文
+	valueCtx := context.WithValue(ctx, "hello", "pixel")
+	value := valueCtx.Value("hello")
+	if value != nil {
+		fmt.Printf("Value type: %T/%v, value: %v.\n", value,
+			reflect.TypeOf(value), value)
+	}
+}
+
+//Test param from context
+func TestRouterParamsFromContext(t *testing.T) {
+	routed := false
+
+	wantParams := httprouter.Params{httprouter.Param{"name", "gopher"}}
+	handlerFunc := func(_ http.ResponseWriter, req *http.Request) {
+		// get params from request context
+		params := httprouter.ParamsFromContext(req.Context())
+
+		if !reflect.DeepEqual(params, wantParams) {
+			t.Fatalf("Wrong parameter values: want %v, got %v", wantParams, params)
+		}
+
+		routed = true
+	}
+
+	var nilParams httprouter.Params
+	handlerFuncNil := func(_ http.ResponseWriter, req *http.Request) {
+		// get params from request context
+		params := httprouter.ParamsFromContext(req.Context())
+
+		if !reflect.DeepEqual(params, nilParams) {
+			t.Fatalf("Wrong parameter values: want %v, got %v", nilParams, params)
+		}
+
+		routed = true
+	}
+	router := httprouter.New()
+	router.HandlerFunc(http.MethodGet, "/user", handlerFuncNil)
+	router.HandlerFunc(http.MethodGet, "/user/:name", handlerFunc)
+
+	w := new(mockResponseWriter)
+	r, _ := http.NewRequest(http.MethodGet, "/user/gopher", nil)
+	router.ServeHTTP(w, r)
+	if !routed {
+		t.Fatal("Routing failed!")
+	}
+
+	routed = false
+	r, _ = http.NewRequest(http.MethodGet, "/user", nil)
+	router.ServeHTTP(w, r)
+	if !routed {
+		t.Fatal("Routing failed!")
+	}
+}
+
 func TestHttpRouter(t *testing.T) {
 	router := httprouter.New()
 
 	routed := false
-	router.Handle("GET", "/user/ikbc", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		//do nothing
-	})
-	router.Handle("GET", "/user/ikbcd", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		//do nothing
-	})
-	router.Handle("GET", "/user/abc/:id", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		//do nothing
-		ps.ByName("id")
+
+	router.Handle("GET", "/user/ab/", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		//do nothing, just add path+handler
 	})
 
-	router.Handle(http.MethodGet, "/pixel/:name", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	router.Handle("GET", "/user/abc/", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		//do nothing, just add path+handler
+	})
+
+	router.Handle("GET", "/user/a/", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		//do nothing, just add path+handler
+	})
+
+	router.Handle(http.MethodGet, "/user/abc/:name", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		routed = true
 		want := httprouter.Params{httprouter.Param{"name", "gopher"}}
 		if !reflect.DeepEqual(ps, want) {
