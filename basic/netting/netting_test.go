@@ -6,12 +6,15 @@ import (
 	"errors"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestListenAndServer(t *testing.T) {
@@ -65,6 +68,36 @@ func TestContext(t *testing.T) {
 		fmt.Printf("Value type: %T/%v, value: %v.\n", value,
 			reflect.TypeOf(value), value)
 	}
+}
+
+func TestTimeReqWithContext(t *testing.T) {
+	//初始化http请求
+	request, e := http.NewRequest("GET", "https://www.pixelpigpigpig.xyz", nil)
+	if e != nil {
+		log.Println("Error: ", e)
+		return
+	}
+
+	//使用Request生成子上下文, 并且设置截止时间为10毫秒
+	ctx, cancelFunc := context.WithTimeout(request.Context(), 10*time.Millisecond)
+	defer cancelFunc()
+
+	//绑定超时上下文到这个请求
+	request = request.WithContext(ctx)
+
+	//time.Sleep(20 * time.Millisecond)
+
+	//发起请求
+	response, e := http.DefaultClient.Do(request)
+	if e != nil {
+		log.Println("Error: ", e)
+		return
+	}
+
+	defer response.Body.Close()
+	//如果请求没问题, 打印body到控制台
+	io.Copy(os.Stdout, response.Body)
+
 }
 
 //Test param from context
