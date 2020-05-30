@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.3.0
-	github.com/golang/protobuf v0.0.0-20190827175835-822fe56949f5 // indirect
+	github.com/golang/protobuf v1.3.5 // indirect
 	github.com/gomodule/redigo v0.0.0-20190822095346-d3876d43bbbe
 	github.com/gorilla/sessions v0.0.0-20190720202136-9c6b24ee2dee
 	github.com/json-iterator/go v1.1.7 // indirect
