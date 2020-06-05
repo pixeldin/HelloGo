@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -22,78 +24,78 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type CustomerRequert struct {
+type CustomerRequest struct {
 	Id                   int32                      `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name                 string                     `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Email                string                     `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
 	Phone                string                     `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
-	Addresses            []*CustomerRequert_Address `protobuf:"bytes,5,rep,name=addresses,proto3" json:"addresses,omitempty"`
+	Addresses            []*CustomerRequest_Address `protobuf:"bytes,5,rep,name=addresses,proto3" json:"addresses,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                   `json:"-"`
 	XXX_unrecognized     []byte                     `json:"-"`
 	XXX_sizecache        int32                      `json:"-"`
 }
 
-func (m *CustomerRequert) Reset()         { *m = CustomerRequert{} }
-func (m *CustomerRequert) String() string { return proto.CompactTextString(m) }
-func (*CustomerRequert) ProtoMessage()    {}
-func (*CustomerRequert) Descriptor() ([]byte, []int) {
+func (m *CustomerRequest) Reset()         { *m = CustomerRequest{} }
+func (m *CustomerRequest) String() string { return proto.CompactTextString(m) }
+func (*CustomerRequest) ProtoMessage()    {}
+func (*CustomerRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_9efa92dae3d6ec46, []int{0}
 }
 
-func (m *CustomerRequert) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CustomerRequert.Unmarshal(m, b)
+func (m *CustomerRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CustomerRequest.Unmarshal(m, b)
 }
-func (m *CustomerRequert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CustomerRequert.Marshal(b, m, deterministic)
+func (m *CustomerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CustomerRequest.Marshal(b, m, deterministic)
 }
-func (m *CustomerRequert) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CustomerRequert.Merge(m, src)
+func (m *CustomerRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CustomerRequest.Merge(m, src)
 }
-func (m *CustomerRequert) XXX_Size() int {
-	return xxx_messageInfo_CustomerRequert.Size(m)
+func (m *CustomerRequest) XXX_Size() int {
+	return xxx_messageInfo_CustomerRequest.Size(m)
 }
-func (m *CustomerRequert) XXX_DiscardUnknown() {
-	xxx_messageInfo_CustomerRequert.DiscardUnknown(m)
+func (m *CustomerRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CustomerRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CustomerRequert proto.InternalMessageInfo
+var xxx_messageInfo_CustomerRequest proto.InternalMessageInfo
 
-func (m *CustomerRequert) GetId() int32 {
+func (m *CustomerRequest) GetId() int32 {
 	if m != nil {
 		return m.Id
 	}
 	return 0
 }
 
-func (m *CustomerRequert) GetName() string {
+func (m *CustomerRequest) GetName() string {
 	if m != nil {
 		return m.Name
 	}
 	return ""
 }
 
-func (m *CustomerRequert) GetEmail() string {
+func (m *CustomerRequest) GetEmail() string {
 	if m != nil {
 		return m.Email
 	}
 	return ""
 }
 
-func (m *CustomerRequert) GetPhone() string {
+func (m *CustomerRequest) GetPhone() string {
 	if m != nil {
 		return m.Phone
 	}
 	return ""
 }
 
-func (m *CustomerRequert) GetAddresses() []*CustomerRequert_Address {
+func (m *CustomerRequest) GetAddresses() []*CustomerRequest_Address {
 	if m != nil {
 		return m.Addresses
 	}
 	return nil
 }
 
-type CustomerRequert_Address struct {
+type CustomerRequest_Address struct {
 	Street               string   `protobuf:"bytes,1,opt,name=street,proto3" json:"street,omitempty"`
 	City                 string   `protobuf:"bytes,2,opt,name=city,proto3" json:"city,omitempty"`
 	State                string   `protobuf:"bytes,3,opt,name=state,proto3" json:"state,omitempty"`
@@ -104,60 +106,60 @@ type CustomerRequert_Address struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CustomerRequert_Address) Reset()         { *m = CustomerRequert_Address{} }
-func (m *CustomerRequert_Address) String() string { return proto.CompactTextString(m) }
-func (*CustomerRequert_Address) ProtoMessage()    {}
-func (*CustomerRequert_Address) Descriptor() ([]byte, []int) {
+func (m *CustomerRequest_Address) Reset()         { *m = CustomerRequest_Address{} }
+func (m *CustomerRequest_Address) String() string { return proto.CompactTextString(m) }
+func (*CustomerRequest_Address) ProtoMessage()    {}
+func (*CustomerRequest_Address) Descriptor() ([]byte, []int) {
 	return fileDescriptor_9efa92dae3d6ec46, []int{0, 0}
 }
 
-func (m *CustomerRequert_Address) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CustomerRequert_Address.Unmarshal(m, b)
+func (m *CustomerRequest_Address) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CustomerRequest_Address.Unmarshal(m, b)
 }
-func (m *CustomerRequert_Address) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CustomerRequert_Address.Marshal(b, m, deterministic)
+func (m *CustomerRequest_Address) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CustomerRequest_Address.Marshal(b, m, deterministic)
 }
-func (m *CustomerRequert_Address) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CustomerRequert_Address.Merge(m, src)
+func (m *CustomerRequest_Address) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CustomerRequest_Address.Merge(m, src)
 }
-func (m *CustomerRequert_Address) XXX_Size() int {
-	return xxx_messageInfo_CustomerRequert_Address.Size(m)
+func (m *CustomerRequest_Address) XXX_Size() int {
+	return xxx_messageInfo_CustomerRequest_Address.Size(m)
 }
-func (m *CustomerRequert_Address) XXX_DiscardUnknown() {
-	xxx_messageInfo_CustomerRequert_Address.DiscardUnknown(m)
+func (m *CustomerRequest_Address) XXX_DiscardUnknown() {
+	xxx_messageInfo_CustomerRequest_Address.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CustomerRequert_Address proto.InternalMessageInfo
+var xxx_messageInfo_CustomerRequest_Address proto.InternalMessageInfo
 
-func (m *CustomerRequert_Address) GetStreet() string {
+func (m *CustomerRequest_Address) GetStreet() string {
 	if m != nil {
 		return m.Street
 	}
 	return ""
 }
 
-func (m *CustomerRequert_Address) GetCity() string {
+func (m *CustomerRequest_Address) GetCity() string {
 	if m != nil {
 		return m.City
 	}
 	return ""
 }
 
-func (m *CustomerRequert_Address) GetState() string {
+func (m *CustomerRequest_Address) GetState() string {
 	if m != nil {
 		return m.State
 	}
 	return ""
 }
 
-func (m *CustomerRequert_Address) GetZip() string {
+func (m *CustomerRequest_Address) GetZip() string {
 	if m != nil {
 		return m.Zip
 	}
 	return ""
 }
 
-func (m *CustomerRequert_Address) GetIsShippingAddress() bool {
+func (m *CustomerRequest_Address) GetIsShippingAddress() bool {
 	if m != nil {
 		return m.IsShippingAddress
 	}
@@ -251,8 +253,8 @@ func (m *CustomerFilter) GetKeyword() string {
 }
 
 func init() {
-	proto.RegisterType((*CustomerRequert)(nil), "pbDemo.CustomerRequert")
-	proto.RegisterType((*CustomerRequert_Address)(nil), "pbDemo.CustomerRequert.Address")
+	proto.RegisterType((*CustomerRequest)(nil), "pbDemo.CustomerRequest")
+	proto.RegisterType((*CustomerRequest_Address)(nil), "pbDemo.CustomerRequest.Address")
 	proto.RegisterType((*CustomerResponse)(nil), "pbDemo.CustomerResponse")
 	proto.RegisterType((*CustomerFilter)(nil), "pbDemo.CustomerFilter")
 }
@@ -262,25 +264,28 @@ func init() {
 }
 
 var fileDescriptor_9efa92dae3d6ec46 = []byte{
-	// 285 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x64, 0x91, 0xdf, 0x4a, 0xc3, 0x30,
-	0x14, 0xc6, 0x69, 0xbb, 0x76, 0xeb, 0x11, 0xea, 0x0c, 0x22, 0xc1, 0x1b, 0x4b, 0xaf, 0x8a, 0x48,
-	0x2f, 0xe6, 0xad, 0x5e, 0x88, 0xe2, 0x03, 0xc4, 0x27, 0xe8, 0xda, 0x83, 0x0b, 0xae, 0x4d, 0x4c,
-	0x52, 0x64, 0xbe, 0x82, 0xef, 0xe2, 0x33, 0x4a, 0xd2, 0x84, 0x81, 0xbb, 0x3b, 0xdf, 0x77, 0xfe,
-	0x7c, 0xbf, 0x36, 0x50, 0x74, 0x93, 0x36, 0x62, 0x40, 0xd5, 0x48, 0x25, 0x8c, 0x20, 0x99, 0xdc,
-	0xbe, 0xe0, 0x20, 0xaa, 0xdf, 0x18, 0xce, 0x9f, 0x7d, 0x8b, 0xe1, 0xe7, 0x84, 0xca, 0x90, 0x02,
-	0x62, 0xde, 0xd3, 0xa8, 0x8c, 0xea, 0x94, 0xc5, 0xbc, 0x27, 0x04, 0x16, 0x63, 0x3b, 0x20, 0x8d,
-	0xcb, 0xa8, 0xce, 0x99, 0xab, 0xc9, 0x25, 0xa4, 0x38, 0xb4, 0x7c, 0x4f, 0x13, 0x67, 0xce, 0xc2,
-	0xba, 0x72, 0x27, 0x46, 0xa4, 0x8b, 0xd9, 0x75, 0x82, 0x3c, 0x42, 0xde, 0xf6, 0xbd, 0x42, 0xad,
-	0x51, 0xd3, 0xb4, 0x4c, 0xea, 0xb3, 0xcd, 0x4d, 0x33, 0xe7, 0x37, 0xff, 0xb2, 0x9b, 0xa7, 0x79,
-	0x90, 0x1d, 0x37, 0xae, 0x7f, 0x22, 0x58, 0x7a, 0x9b, 0x5c, 0x41, 0xa6, 0x8d, 0x42, 0x34, 0x0e,
-	0x2f, 0x67, 0x5e, 0x59, 0xc4, 0x8e, 0x9b, 0x43, 0x40, 0xb4, 0xb5, 0x85, 0xd1, 0xa6, 0x35, 0x18,
-	0x10, 0x9d, 0x20, 0x6b, 0x48, 0xbe, 0xb9, 0xf4, 0x80, 0xb6, 0x24, 0x77, 0x70, 0xc1, 0xf5, 0xdb,
-	0x8e, 0x4b, 0xc9, 0xc7, 0x77, 0x1f, 0x44, 0xd3, 0x32, 0xaa, 0x57, 0xec, 0xb4, 0x51, 0x3d, 0xc0,
-	0xfa, 0xc8, 0xac, 0xa5, 0x18, 0x35, 0x9e, 0xfc, 0x30, 0x0a, 0x4b, 0x3d, 0x75, 0x9d, 0xbd, 0x13,
-	0xbb, 0x3b, 0x41, 0x56, 0xb7, 0x50, 0x84, 0xed, 0x57, 0xbe, 0x37, 0xa8, 0xec, 0xec, 0x07, 0x1e,
-	0xbe, 0x84, 0xea, 0xfd, 0x27, 0x05, 0xb9, 0x01, 0x58, 0x85, 0xd9, 0x6d, 0xe6, 0x5e, 0xed, 0xfe,
-	0x2f, 0x00, 0x00, 0xff, 0xff, 0x3a, 0xaa, 0x8d, 0xcf, 0xc7, 0x01, 0x00, 0x00,
+	// 332 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x52, 0x4d, 0x4f, 0xe3, 0x30,
+	0x10, 0xad, 0xd3, 0xa6, 0x1f, 0xb3, 0xab, 0x6c, 0xd7, 0x5a, 0x75, 0xad, 0x5e, 0x88, 0x72, 0x8a,
+	0x10, 0x8a, 0x50, 0xb9, 0xc2, 0x01, 0x95, 0x8f, 0x7b, 0xf8, 0x05, 0x69, 0x32, 0xa2, 0x16, 0x4d,
+	0x6c, 0x6c, 0x57, 0xa8, 0xfc, 0x05, 0xee, 0xfc, 0x0c, 0x7e, 0x23, 0xb2, 0x13, 0x53, 0xa9, 0x55,
+	0x6f, 0xf3, 0xde, 0x3c, 0xbf, 0x79, 0x33, 0x32, 0x44, 0xe5, 0x56, 0x1b, 0x51, 0xa3, 0xca, 0xa4,
+	0x12, 0x46, 0xd0, 0xa1, 0x5c, 0xdd, 0x61, 0x2d, 0x92, 0xaf, 0x00, 0xfe, 0x2c, 0xbb, 0x56, 0x8e,
+	0xaf, 0x5b, 0xd4, 0x86, 0x46, 0x10, 0xf0, 0x8a, 0x91, 0x98, 0xa4, 0x61, 0x1e, 0xf0, 0x8a, 0x52,
+	0x18, 0x34, 0x45, 0x8d, 0x2c, 0x88, 0x49, 0x3a, 0xc9, 0x5d, 0x4d, 0xff, 0x41, 0x88, 0x75, 0xc1,
+	0x37, 0xac, 0xef, 0xc8, 0x16, 0x58, 0x56, 0xae, 0x45, 0x83, 0x6c, 0xd0, 0xb2, 0x0e, 0xd0, 0x1b,
+	0x98, 0x14, 0x55, 0xa5, 0x50, 0x6b, 0xd4, 0x2c, 0x8c, 0xfb, 0xe9, 0xaf, 0xc5, 0x59, 0xd6, 0xce,
+	0xcf, 0x0e, 0x66, 0x67, 0xb7, 0xad, 0x30, 0xdf, 0xbf, 0x98, 0x7f, 0x10, 0x18, 0x75, 0x34, 0x9d,
+	0xc1, 0x50, 0x1b, 0x85, 0x68, 0x5c, 0xbc, 0x49, 0xde, 0x21, 0x1b, 0xb1, 0xe4, 0x66, 0xe7, 0x23,
+	0xda, 0xda, 0x86, 0xd1, 0xa6, 0x30, 0xe8, 0x23, 0x3a, 0x40, 0xa7, 0xd0, 0x7f, 0xe7, 0xb2, 0x0b,
+	0x68, 0x4b, 0x7a, 0x01, 0x7f, 0xb9, 0x7e, 0x5a, 0x73, 0x29, 0x79, 0xf3, 0xdc, 0x0d, 0x62, 0x61,
+	0x4c, 0xd2, 0x71, 0x7e, 0xdc, 0x48, 0xae, 0x61, 0xba, 0xcf, 0xac, 0xa5, 0x68, 0x34, 0x1e, 0x1d,
+	0x8c, 0xc1, 0x48, 0x6f, 0xcb, 0xd2, 0xfa, 0x04, 0xce, 0xc7, 0xc3, 0xe4, 0x1c, 0x22, 0xff, 0xfa,
+	0x81, 0x6f, 0x0c, 0x2a, 0xab, 0x7d, 0xc1, 0xdd, 0x9b, 0x50, 0x55, 0xb7, 0x92, 0x87, 0x8b, 0x4f,
+	0x02, 0x63, 0x2f, 0xa6, 0x4b, 0xf8, 0xfd, 0x88, 0xc6, 0x43, 0x4d, 0x67, 0x87, 0x07, 0x6c, 0xed,
+	0xe6, 0xff, 0x4f, 0x1c, 0x36, 0xe9, 0x5d, 0x12, 0x7a, 0x0f, 0xd1, 0x52, 0x61, 0x61, 0xf0, 0xc7,
+	0xf6, 0x94, 0x7c, 0xce, 0x8e, 0x1b, 0xed, 0xb2, 0x49, 0x6f, 0x35, 0x74, 0x5f, 0xe8, 0xea, 0x3b,
+	0x00, 0x00, 0xff, 0xff, 0x85, 0x5f, 0x70, 0x3b, 0x54, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -295,6 +300,8 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type CustomerClient interface {
+	GetCustomers(ctx context.Context, in *CustomerFilter, opts ...grpc.CallOption) (Customer_GetCustomersClient, error)
+	CreateCustomer(ctx context.Context, in *CustomerRequest, opts ...grpc.CallOption) (*CustomerResponse, error)
 }
 
 type customerClient struct {
@@ -305,22 +312,122 @@ func NewCustomerClient(cc grpc.ClientConnInterface) CustomerClient {
 	return &customerClient{cc}
 }
 
+func (c *customerClient) GetCustomers(ctx context.Context, in *CustomerFilter, opts ...grpc.CallOption) (Customer_GetCustomersClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Customer_serviceDesc.Streams[0], "/pbDemo.Customer/GetCustomers", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &customerGetCustomersClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Customer_GetCustomersClient interface {
+	Recv() (*CustomerRequest, error)
+	grpc.ClientStream
+}
+
+type customerGetCustomersClient struct {
+	grpc.ClientStream
+}
+
+func (x *customerGetCustomersClient) Recv() (*CustomerRequest, error) {
+	m := new(CustomerRequest)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *customerClient) CreateCustomer(ctx context.Context, in *CustomerRequest, opts ...grpc.CallOption) (*CustomerResponse, error) {
+	out := new(CustomerResponse)
+	err := c.cc.Invoke(ctx, "/pbDemo.Customer/CreateCustomer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CustomerServer is the server API for Customer service.
 type CustomerServer interface {
+	GetCustomers(*CustomerFilter, Customer_GetCustomersServer) error
+	CreateCustomer(context.Context, *CustomerRequest) (*CustomerResponse, error)
 }
 
 // UnimplementedCustomerServer can be embedded to have forward compatible implementations.
 type UnimplementedCustomerServer struct {
 }
 
+func (*UnimplementedCustomerServer) GetCustomers(req *CustomerFilter, srv Customer_GetCustomersServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetCustomers not implemented")
+}
+func (*UnimplementedCustomerServer) CreateCustomer(ctx context.Context, req *CustomerRequest) (*CustomerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCustomer not implemented")
+}
+
 func RegisterCustomerServer(s *grpc.Server, srv CustomerServer) {
 	s.RegisterService(&_Customer_serviceDesc, srv)
+}
+
+func _Customer_GetCustomers_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(CustomerFilter)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(CustomerServer).GetCustomers(m, &customerGetCustomersServer{stream})
+}
+
+type Customer_GetCustomersServer interface {
+	Send(*CustomerRequest) error
+	grpc.ServerStream
+}
+
+type customerGetCustomersServer struct {
+	grpc.ServerStream
+}
+
+func (x *customerGetCustomersServer) Send(m *CustomerRequest) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Customer_CreateCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CustomerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CustomerServer).CreateCustomer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pbDemo.Customer/CreateCustomer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CustomerServer).CreateCustomer(ctx, req.(*CustomerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var _Customer_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pbDemo.Customer",
 	HandlerType: (*CustomerServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "customer.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateCustomer",
+			Handler:    _Customer_CreateCustomer_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetCustomers",
+			Handler:       _Customer_GetCustomers_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "customer.proto",
 }

@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.3.0
-	github.com/golang/protobuf v1.3.5 // indirect
+	github.com/golang/protobuf v1.3.5
 	github.com/gomodule/redigo v0.0.0-20190822095346-d3876d43bbbe
 	github.com/gorilla/sessions v0.0.0-20190720202136-9c6b24ee2dee
 	github.com/json-iterator/go v1.1.7 // indirect
@@ -21,7 +21,7 @@ require (
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
 	golang.org/x/sys v0.0.0-20190904005037-43c01164e931 // indirect
 	golang.org/x/tools v0.0.0-20190524140312-2c0ae7006135 // indirect
-	google.golang.org/grpc v1.29.1 // indirect
+	google.golang.org/grpc v1.29.1
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 	honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc // indirect

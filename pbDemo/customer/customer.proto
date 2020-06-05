@@ -2,10 +2,11 @@ syntax = "proto3";
 package pbDemo;
 
 service Customer {
-
+    rpc GetCustomers (CustomerFilter) returns (stream CustomerRequest) {}
+    rpc CreateCustomer (CustomerRequest) returns (CustomerResponse) {}
 }
 
-message CustomerRequert {
+message CustomerRequest {
     int32 id = 1; // Unique ID number for a Customer.
     string name = 2;
     string email = 3;
