@@ -8,7 +8,7 @@ import (
 func main() {
 	go leakRoutine()
 	time.Sleep(3000)
-	fmt.Println("Until main exit, routine before will leak in memory")
+	fmt.Println("Until Main exit, routine before will leak in memory")
 }
 
 //该协程会阻塞, 造成泄露, 如果加进主协程,会导致死锁

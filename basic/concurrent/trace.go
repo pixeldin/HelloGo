@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func main() {
+func main6() {
 
 	//runtime.GOMAXPROCS(1)
 	//go func() {
@@ -24,7 +24,7 @@ func main() {
 
 	//尝试切换协程
 	//time.Sleep(100)
-	//println("main done.")
+	//println("Main done.")
 
 	TraceDemo()
 }

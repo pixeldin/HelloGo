@@ -14,7 +14,7 @@ func init()  {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func main()  {
+func main2()  {
 	fmt.Println("BaseBall start.")
 
 	court := make(chan int)

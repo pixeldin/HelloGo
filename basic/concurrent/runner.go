@@ -8,7 +8,7 @@ import (
 
 var waitGroup sync.WaitGroup
 
-func main() {
+func main4() {
 	baton := make(chan int)
 
 	waitGroup.Add(1)

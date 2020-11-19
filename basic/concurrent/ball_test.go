@@ -23,6 +23,7 @@ func TestPV(t *testing.T) {
 	}
 }
 
+
 func SignalCron() {
 	for {
 		mtx.Lock()
@@ -30,4 +31,8 @@ func SignalCron() {
 		c.Signal()
 		mtx.Unlock()
 	}
+}
+
+func TestSome(t *testing.T) {
+	fmt.Println("aa")
 }

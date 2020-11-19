@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-func main()  {
+func Main()  {
 	type Pk struct {
 		i int
 		gn string

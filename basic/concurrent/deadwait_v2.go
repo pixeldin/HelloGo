@@ -10,7 +10,7 @@ type Pk struct {
 	gn string
 }
 
-func main()  {
+func main3()  {
 
 	c := make(chan Pk, 2)
 	//wg.Add(2)

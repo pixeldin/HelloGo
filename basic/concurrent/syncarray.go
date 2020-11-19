@@ -10,7 +10,7 @@ type Pks struct {
 	gn string
 }
 
-func main() {
+func main5() {
 	n := 10
 	c := make(chan Pks)
 	done := make(chan bool)
