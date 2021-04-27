@@ -1,8 +1,10 @@
 package pool
 
 import (
+	"HelloGo/basic/body"
 	"bufio"
 	"context"
+	"encoding/json"
 	"errors"
 	"net"
 	"sync"
@@ -14,11 +16,12 @@ type IConn interface {
 
 // Conn 每个对应一个连接
 type Conn struct {
-	addr    string
-	tcp     *net.TCPConn // tcp连接, 可以是其他类型
-	ctx     context.Context
+	addr string
+	tcp  *net.TCPConn // tcp连接, 可以是其他类型
+	ctx  context.Context
+	//writer *bufio.Writer
 	cnlFun  context.CancelFunc // 善后处理
-	retChan *sync.Map          // 存放通道结果集合的map
+	retChan *sync.Map          // 存放通道结果集合的map, 属于统一连接
 	err     error
 }
 
@@ -46,6 +49,8 @@ func NewConn(opt *Option) (c *Conn, err error) {
 		c.tcp = conn.(*net.TCPConn)
 	}
 
+	//c.writer = bufio.NewWriter(c.tcp)
+
 	if err = c.tcp.SetKeepAlive(true); err != nil {
 		return
 	}
@@ -58,7 +63,8 @@ func NewConn(opt *Option) (c *Conn, err error) {
 
 	c.ctx, c.cnlFun = context.WithCancel(context.Background())
 
-	// todo...轮询接收结果到相应的结果集
+	// 异步接收结果到相应的结果集
+	go receiveResp(c)
 
 	return
 }
@@ -73,6 +79,20 @@ func receiveResp(c *Conn) {
 		default:
 			if scanner.Scan() {
 				// 读取数据
+				TAG := "server: hello, "
+				mg := new(body.Message)
+				if err := json.Unmarshal(scanner.Bytes(), mg); err != nil {
+					return
+				}
+				uid := mg.Uid
+				if load, ok := c.retChan.Load(uid); ok {
+					c.retChan.Delete(uid)
+					// 消息通道
+					if ch, ok := load.(chan string); ok {
+						ch <- TAG + mg.Val
+						close(ch)
+					}
+				}
 			} else {
 				// 错误
 				if scanner.Err() != nil {
@@ -105,7 +125,7 @@ func (c *Conn) Close() (err error) {
 	if c.retChan != nil {
 		c.retChan.Range(func(key, value interface{}) bool {
 			// 根据具体业务转换通道类型
-			if ch, ok := value.(chan interface{}); ok {
+			if ch, ok := value.(chan string); ok {
 				close(ch)
 			}
 			return true
@@ -115,9 +135,12 @@ func (c *Conn) Close() (err error) {
 }
 
 // Send 发送请求, 返回具体业务通道
-func (c *Conn) Send(ctx context.Context, msg string) (ch chan interface{}, err error) {
-	ch = make(chan interface{})
-	c.retChan.Store(msg, ch)
-	// todo... 请求格式
+func (c *Conn) Send(ctx context.Context, msg *body.Message) (ch chan string, err error) {
+	ch = make(chan string)
+	c.retChan.Store(msg.Uid, ch)
+	// 请求
+	js, _ := json.Marshal(msg)
+	_, err = c.tcp.Write(js)
+	c.tcp.CloseWrite()
 	return
 }

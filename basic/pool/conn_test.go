@@ -1,9 +1,13 @@
 package pool
 
 import (
+	"HelloGo/basic/body"
+	"context"
 	"fmt"
+	"log"
 	"sync"
 	"testing"
+	"time"
 )
 
 func TestSome(t *testing.T) {
@@ -15,5 +19,32 @@ func TestSome(t *testing.T) {
 			fmt.Println(value)
 			return true
 		})
+	}
+	//var val string
+	val, ok := sm.Load("hello")
+	if !ok {
+		log.Fatal("not found key!")
+	}
+	log.Print(val.(string))
+}
+
+func TestSendMsg(t *testing.T) {
+	opt := &Option{
+		addr:        "0.0.0.0:3000",
+		size:        3,
+		readTimeout: 3 * time.Second,
+		dialTimeout: 3 * time.Second,
+		keepAlive:   10 * time.Second,
+	}
+	c, err := NewConn(opt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	msg := &body.Message{Uid: "pixel-1", Val: "pixelpigpigpig"}
+	rec, err := c.Send(context.Background(), msg)
+	if err != nil {
+		t.Error(err)
+	} else {
+		t.Logf("%+v", <-rec)
 	}
 }

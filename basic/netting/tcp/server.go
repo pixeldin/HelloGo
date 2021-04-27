@@ -1,7 +1,11 @@
 package tcp
 
 import (
+	"HelloGo/basic/body"
+	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"net"
 )
 
@@ -21,6 +25,40 @@ func handle(conn net.Conn) {
 		conn.Write(msg)
 	}
 }
+
+func transfer(conn net.Conn) {
+	defer func() {
+		remoteAddr := conn.RemoteAddr().String()
+		log.Print("discard remove add:", remoteAddr)
+		conn.Close()
+	}()
+
+	for {
+		var msg body.Message
+
+		if err := json.NewDecoder(conn).Decode(&msg); err != nil && err != io.EOF {
+			log.Printf("Decode from client err: %v", err)
+			return
+		}
+
+		if msg.Uid != "" || msg.Val != "" {
+			//conn.Write([]byte(msg.Val))
+			ser, _ := json.Marshal(msg)
+			conn.Write(append(ser, '\n'))
+		}
+	}
+	//buf := make([]byte, 1024)
+	//// Read the incoming connection into the buffer.
+	//_, err := conn.Read(buf)
+	//if err != nil && err != io.EOF {
+	//	log.Printf("read from client err: %v", err)
+	//	return
+	//}
+	//
+	//json.Unmarshal(buf, msg)
+
+}
+
 func ListenAndServer() {
 	fmt.Println("Start server...")
 	listen, err := net.Listen("tcp", "0.0.0.0:3000")
@@ -34,6 +72,7 @@ func ListenAndServer() {
 			fmt.Println("accept failed")
 			continue
 		}
-		go handle(conn)
+		//go handle(conn)
+		go transfer(conn)
 	}
 }
