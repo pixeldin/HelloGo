@@ -94,14 +94,13 @@ func receiveResp(c *Conn) {
 					}
 				}
 			} else {
-				// 错误
+				// 错误, 合并了EOF
 				if scanner.Err() != nil {
 					c.err = scanner.Err()
 				} else {
-					// nil err
+					// EOF
 					c.err = errors.New("EOF of scanner")
 				}
-				// EOF
 				c.Close()
 				return
 			}
@@ -141,6 +140,6 @@ func (c *Conn) Send(ctx context.Context, msg *body.Message) (ch chan string, err
 	// 请求
 	js, _ := json.Marshal(msg)
 	_, err = c.tcp.Write(js)
-	c.tcp.CloseWrite()
+	//c.tcp.CloseWrite()
 	return
 }

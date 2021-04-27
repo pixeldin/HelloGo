@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"time"
 )
 
 func handle(conn net.Conn) {
@@ -32,6 +33,9 @@ func transfer(conn net.Conn) {
 		log.Print("discard remove add:", remoteAddr)
 		conn.Close()
 	}()
+
+	// 设置10秒关闭连接
+	conn.SetDeadline(time.Now().Add(10 * time.Second))
 
 	for {
 		var msg body.Message
