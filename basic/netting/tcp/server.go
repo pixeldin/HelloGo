@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"net"
-	"time"
 )
 
 func handle(conn net.Conn) {
@@ -35,48 +34,43 @@ func transfer(conn net.Conn) {
 	}()
 
 	// 设置10秒关闭连接
-	conn.SetDeadline(time.Now().Add(10 * time.Second))
+	//conn.SetDeadline(time.Now().Add(10 * time.Second))
 
 	for {
 		var msg body.Message
 
 		if err := json.NewDecoder(conn).Decode(&msg); err != nil && err != io.EOF {
 			log.Printf("Decode from client err: %v", err)
+			// todo... 仿照redis协议写入err前缀符号，通知client错误处理
 			return
 		}
 
 		if msg.Uid != "" || msg.Val != "" {
 			//conn.Write([]byte(msg.Val))
+			var rsp body.Resp
+			TAG := "server: hello, "
+			rsp.Uid = msg.Uid
+			rsp.Val = TAG + msg.Val
 			ser, _ := json.Marshal(msg)
+
 			conn.Write(append(ser, '\n'))
 		}
 	}
-	//buf := make([]byte, 1024)
-	//// Read the incoming connection into the buffer.
-	//_, err := conn.Read(buf)
-	//if err != nil && err != io.EOF {
-	//	log.Printf("read from client err: %v", err)
-	//	return
-	//}
-	//
-	//json.Unmarshal(buf, msg)
-
 }
 
 func ListenAndServer() {
-	fmt.Println("Start server...")
+	log.Print("Start server...")
 	listen, err := net.Listen("tcp", "0.0.0.0:3000")
 	if err != nil {
-		fmt.Println("Listen failed. msg: ", err)
+		log.Fatal("Listen failed. msg: ", err)
 		return
 	}
 	for {
 		conn, err := listen.Accept()
 		if err != nil {
-			fmt.Println("accept failed")
+			log.Printf("accept failed, err: %v", err)
 			continue
 		}
-		//go handle(conn)
 		go transfer(conn)
 	}
 }

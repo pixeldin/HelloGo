@@ -14,13 +14,13 @@ type IConn interface {
 	Close() error
 }
 
-// Conn 每个对应一个连接
+// Conn 对应每个连接
 type Conn struct {
-	addr string
-	tcp  *net.TCPConn // tcp连接, 可以是其他类型
-	ctx  context.Context
-	//writer *bufio.Writer
-	cnlFun  context.CancelFunc // 善后处理
+	addr    string       // 地址
+	tcp     *net.TCPConn // tcp连接实例, 可以是其他类型
+	ctx     context.Context
+	writer  *bufio.Writer
+	cnlFun  context.CancelFunc // 用于通知ctx结束
 	retChan *sync.Map          // 存放通道结果集合的map, 属于统一连接
 	err     error
 }
@@ -49,7 +49,7 @@ func NewConn(opt *Option) (c *Conn, err error) {
 		c.tcp = conn.(*net.TCPConn)
 	}
 
-	//c.writer = bufio.NewWriter(c.tcp)
+	c.writer = bufio.NewWriter(c.tcp)
 
 	if err = c.tcp.SetKeepAlive(true); err != nil {
 		return
@@ -75,21 +75,21 @@ func receiveResp(c *Conn) {
 	for {
 		select {
 		case <-c.ctx.Done():
+			// c.cnlFun() 被执行了
 			return
 		default:
 			if scanner.Scan() {
 				// 读取数据
-				TAG := "server: hello, "
-				mg := new(body.Message)
-				if err := json.Unmarshal(scanner.Bytes(), mg); err != nil {
+				rsp := new(body.Resp)
+				if err := json.Unmarshal(scanner.Bytes(), rsp); err != nil {
 					return
 				}
-				uid := mg.Uid
+				uid := rsp.Uid
 				if load, ok := c.retChan.Load(uid); ok {
 					c.retChan.Delete(uid)
 					// 消息通道
 					if ch, ok := load.(chan string); ok {
-						ch <- TAG + mg.Val
+						ch <- rsp.Val
 						close(ch)
 					}
 				}
@@ -98,8 +98,7 @@ func receiveResp(c *Conn) {
 				if scanner.Err() != nil {
 					c.err = scanner.Err()
 				} else {
-					// EOF
-					c.err = errors.New("EOF of scanner")
+					c.err = errors.New("scanner done")
 				}
 				c.Close()
 				return
@@ -133,13 +132,24 @@ func (c *Conn) Close() (err error) {
 	return
 }
 
-// Send 发送请求, 返回具体业务通道
+/*
+	Send 发送请求, 返回具体业务通道
+	注意如果入参的msg消息体是interface{}类型, 最好根据业务进行
+	类型断言校验, 避免server端解析出错, 导致后续该连接不可复用。
+*/
 func (c *Conn) Send(ctx context.Context, msg *body.Message) (ch chan string, err error) {
 	ch = make(chan string)
 	c.retChan.Store(msg.Uid, ch)
 	// 请求
 	js, _ := json.Marshal(msg)
-	_, err = c.tcp.Write(js)
+
+	_, err = c.writer.Write(js)
+	if err != nil {
+		return
+	}
+
+	err = c.writer.Flush()
+	// 连接不作关闭, 后续可以放入连接池
 	//c.tcp.CloseWrite()
 	return
 }

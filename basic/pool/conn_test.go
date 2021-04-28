@@ -34,7 +34,7 @@ func TestSendMsg(t *testing.T) {
 		size:        3,
 		readTimeout: 3 * time.Second,
 		dialTimeout: 3 * time.Second,
-		keepAlive:   5 * time.Second,
+		keepAlive:   30 * time.Second,
 	}
 	c, err := NewConn(opt)
 	if err != nil {
@@ -48,7 +48,7 @@ func TestSendMsg(t *testing.T) {
 		t.Logf("rec1: %+v", <-rec)
 	}
 
-	msg.Val = "another pig"
+	msg.Val = "another pig!"
 	rec2, err := c.Send(context.Background(), msg)
 	if err != nil {
 		t.Error(err)
