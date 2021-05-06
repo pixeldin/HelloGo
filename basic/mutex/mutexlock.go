@@ -11,7 +11,7 @@ type service struct {
 	lock               sync.RWMutex
 }
 
-func main() {
+func main_l() {
 	s := "hello world, 宇宙"
 	trs := []rune(s)
 	fmt.Println(trs)

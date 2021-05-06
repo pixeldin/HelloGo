@@ -75,7 +75,7 @@ func receiveResp(c *Conn) {
 	for {
 		select {
 		case <-c.ctx.Done():
-			// c.cnlFun() 被执行了
+			// c.cnlFun() 被执行了, 如连接池关闭
 			return
 		default:
 			if scanner.Scan() {

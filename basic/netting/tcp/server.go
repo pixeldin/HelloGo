@@ -26,6 +26,8 @@ func handle(conn net.Conn) {
 	}
 }
 
+const TAG = "server: hello, "
+
 func transfer(conn net.Conn) {
 	defer func() {
 		remoteAddr := conn.RemoteAddr().String()
@@ -41,14 +43,13 @@ func transfer(conn net.Conn) {
 
 		if err := json.NewDecoder(conn).Decode(&msg); err != nil && err != io.EOF {
 			log.Printf("Decode from client err: %v", err)
-			// todo... 仿照redis协议写入err前缀符号，通知client错误处理
+			// todo... 仿照redis协议写入err前缀符号`-`，通知client错误处理
 			return
 		}
 
 		if msg.Uid != "" || msg.Val != "" {
 			//conn.Write([]byte(msg.Val))
 			var rsp body.Resp
-			TAG := "server: hello, "
 			rsp.Uid = msg.Uid
 			rsp.Val = TAG + msg.Val
 			ser, _ := json.Marshal(msg)
