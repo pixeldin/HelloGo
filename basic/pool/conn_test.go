@@ -5,6 +5,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
+	"os"
 	"sync"
 	"testing"
 	"time"
@@ -28,18 +30,24 @@ func TestSome(t *testing.T) {
 	log.Print(val.(string))
 }
 
-func TestSendMsg(t *testing.T) {
-	opt := &Option{
-		addr:        "0.0.0.0:3000",
-		size:        3,
-		readTimeout: 3 * time.Second,
-		dialTimeout: 3 * time.Second,
-		keepAlive:   30 * time.Second,
-	}
+var OPT = &Option{
+	addr:        "0.0.0.0:3000",
+	size:        3,
+	readTimeout: 3 * time.Second,
+	dialTimeout: 3 * time.Second,
+	keepAlive:   30 * time.Second,
+}
+
+func createConn(opt *Option) *Conn {
 	c, err := NewConn(opt)
 	if err != nil {
-		t.Fatal(err)
+		panic(err)
 	}
+	return c
+}
+
+func TestSendMsg(t *testing.T) {
+	c := createConn(OPT)
 	msg := &body.Message{Uid: "pixel-1", Val: "pixelpig!"}
 	rec, err := c.Send(context.Background(), msg)
 	if err != nil {
@@ -55,5 +63,39 @@ func TestSendMsg(t *testing.T) {
 	} else {
 		t.Logf("rec2: %+v", <-rec2)
 	}
+}
 
+func TestAliveCheck(t *testing.T) {
+	conn, err := net.Dial("tcp", "127.0.0.1:3000")
+	if err != nil {
+		fmt.Println("dial failed:", err)
+		os.Exit(1)
+	}
+	defer conn.Close()
+
+	buffer := make([]byte, 512)
+
+	tcp, ok := conn.(*net.TCPConn)
+	if !ok {
+		return
+	}
+	if err := tcp.SetKeepAlive(true); err != nil {
+		t.Error(err)
+		return
+	}
+	// 30s之后开启状态检测
+	if err = tcp.SetKeepAlivePeriod(30 * time.Second); err != nil {
+		return
+	}
+
+	for {
+
+		n, err := tcp.Read(buffer)
+		if err != nil {
+			fmt.Println("Read failed:", err)
+			return
+		}
+
+		fmt.Println("count:", n, "msg:", string(buffer))
+	}
 }

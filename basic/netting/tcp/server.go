@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"time"
 )
 
 func handle(conn net.Conn) {
@@ -24,6 +25,28 @@ func handle(conn net.Conn) {
 		msg := []byte("hello net\n.")
 		conn.Write(msg)
 	}
+}
+
+func handleConnection(conn net.Conn) {
+	defer conn.Close()
+
+	var buffer []byte = []byte("You are welcome. I'm server.")
+
+	for {
+
+		time.Sleep(1 * time.Second)
+		n, err := conn.Write(buffer)
+		if err != nil {
+			log.Println("Write error:", err)
+			break
+		}
+		log.Println("send:", n)
+
+		select {}
+	}
+
+	log.Println("connetion end")
+
 }
 
 const TAG = "server: hello, "
@@ -72,6 +95,7 @@ func ListenAndServer() {
 			log.Printf("accept failed, err: %v", err)
 			continue
 		}
-		go transfer(conn)
+		//go transfer(conn)
+		go handleConnection(conn)
 	}
 }
