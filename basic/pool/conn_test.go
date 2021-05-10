@@ -35,7 +35,7 @@ var OPT = &Option{
 	size:        3,
 	readTimeout: 3 * time.Second,
 	dialTimeout: 3 * time.Second,
-	keepAlive:   30 * time.Second,
+	keepAlive:   1 * time.Second,
 }
 
 func createConn(opt *Option) *Conn {
@@ -56,13 +56,30 @@ func TestSendMsg(t *testing.T) {
 		t.Logf("rec1: %+v", <-rec)
 	}
 
-	msg.Val = "another pig!"
-	rec2, err := c.Send(context.Background(), msg)
-	if err != nil {
-		t.Error(err)
+	//msg.Val = "another pig!"
+	//rec2, err := c.Send(context.Background(), msg)
+	//if err != nil {
+	//	t.Error(err)
+	//} else {
+	//	t.Logf("rec2: %+v", <-rec2)
+	//}
+
+	// 超时判断
+	rec3, err := c.Send(context.Background(), msg)
+	if err == nil {
+		select {
+		case resp := <-rec3:
+			t.Logf("rec3: %+v", resp)
+			return
+		case <-time.After(time.Second * 1):
+			t.Error("Wait for resp timeout!")
+			return
+		}
 	} else {
-		t.Logf("rec2: %+v", <-rec2)
+		t.Error(err)
 	}
+
+	t.Log("finished")
 }
 
 func TestAliveCheck(t *testing.T) {
@@ -93,7 +110,8 @@ func TestAliveCheck(t *testing.T) {
 		n, err := tcp.Read(buffer)
 		if err != nil {
 			fmt.Println("Read failed:", err)
-			return
+			time.Sleep(1)
+			continue
 		}
 
 		fmt.Println("count:", n, "msg:", string(buffer))

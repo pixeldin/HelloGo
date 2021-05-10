@@ -75,8 +75,10 @@ func transfer(conn net.Conn) {
 			var rsp body.Resp
 			rsp.Uid = msg.Uid
 			rsp.Val = TAG + msg.Val
+			rsp.Ts = time.Now().String()
 			ser, _ := json.Marshal(msg)
 
+			time.Sleep(3 * time.Second)
 			conn.Write(append(ser, '\n'))
 		}
 	}
@@ -95,7 +97,7 @@ func ListenAndServer() {
 			log.Printf("accept failed, err: %v", err)
 			continue
 		}
-		//go transfer(conn)
-		go handleConnection(conn)
+		go transfer(conn)
+		//go handleConnection(conn)
 	}
 }

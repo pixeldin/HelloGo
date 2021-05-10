@@ -8,4 +8,5 @@ type Message struct {
 type Resp struct {
 	Uid string
 	Val string
+	Ts  string
 }
