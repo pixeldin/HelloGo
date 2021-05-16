@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"strconv"
 	"time"
 )
 
@@ -75,10 +76,12 @@ func transfer(conn net.Conn) {
 			var rsp body.Resp
 			rsp.Uid = msg.Uid
 			rsp.Val = TAG + msg.Val
-			rsp.Ts = time.Now().String()
-			ser, _ := json.Marshal(msg)
 
-			time.Sleep(3 * time.Second)
+			rsp.Ts = strconv.FormatInt(time.Now().UnixNano(), 10)
+			ser, _ := json.Marshal(rsp)
+
+			// 模拟服务端耗时
+			//time.Sleep(3 * time.Second)
 			conn.Write(append(ser, '\n'))
 		}
 	}

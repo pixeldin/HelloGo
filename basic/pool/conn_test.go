@@ -57,7 +57,7 @@ func TestSendMsg(t *testing.T) {
 	}
 
 	//msg.Val = "another pig!"
-	//rec2, err := c.Send(context.Background(), msg)
+	//rec2, err := c.SendInPool(context.Background(), msg)
 	//if err != nil {
 	//	t.Error(err)
 	//} else {

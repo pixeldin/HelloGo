@@ -90,7 +90,7 @@ func receiveResp(c *Conn) {
 					c.retChan.Delete(uid)
 					// 消息通道
 					if ch, ok := load.(chan string); ok {
-						ch <- rsp.Ts + ": " + rsp.Val
+						ch <- "ts(ns): " + rsp.Ts + ", " + rsp.Val
 						// 在写入端关闭
 						close(ch)
 					}
@@ -135,7 +135,7 @@ func (c *Conn) Close() (err error) {
 }
 
 /*
-	Send 发送请求, 返回具体业务通道
+	SendInPool 发送请求, 返回具体业务通道
 	注意如果入参的msg消息体是interface{}类型, 最好根据业务进行
 	类型断言校验, 避免server端解析出错，返回err值用于后续判断
 	是否归还连接池。
