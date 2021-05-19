@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"net"
 	"sync"
 )
@@ -24,6 +25,9 @@ type Conn struct {
 	retChan *sync.Map          // 存放通道结果集合的map, 属于统一连接
 	err     error
 }
+
+// 检验是否实现Close接口
+var _ io.Closer = new(Conn)
 
 func NewConn(opt *Option) (c *Conn, err error) {
 	// 初始化连接
