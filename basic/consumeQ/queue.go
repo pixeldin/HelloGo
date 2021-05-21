@@ -37,9 +37,11 @@ func MqBackupToMongo() {
 					msgIdChannel <- "hello"
 					time.Sleep(100)
 					count++
-					if count == 10 {
-						panic("haha")
+					if count == 15 {
+						//panic("haha")
 						//break
+						time.Sleep(10 * time.Second)
+						count = 0
 					}
 				}
 			}()
@@ -52,7 +54,7 @@ func MqBackupToMongo() {
 	// 消费端
 	safego.Go(func() {
 		msgIds := make([]string, 0)
-		timer := time.NewTimer(time.Second * 30)
+		timer := time.NewTimer(time.Second * 3)
 		defer timer.Stop()
 
 		for {
@@ -64,9 +66,10 @@ func MqBackupToMongo() {
 					fmt.Println("Process batch msg with size: ", len(msgIds))
 					msgIds = make([]string, 0)
 				}
-				timer.Reset(time.Second * 30)
+				// 重置计时器
+				timer.Reset(time.Second * 3)
 			case <-timer.C:
-				// 收尾工作
+				// 30秒执行一次收尾工作
 				if len(msgIds) > 0 {
 					// process msgIds with less
 					fmt.Println("Timer: Process batch msg with size: ", len(msgIds))
