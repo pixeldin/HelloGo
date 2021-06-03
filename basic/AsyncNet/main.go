@@ -15,7 +15,8 @@ func main() {
 	for _, item := range address {
 		fmt.Println(item)
 	}
-	http.Handle("/", http.FileServer(http.Dir("D:\\Vnc\\anjian_script\\")))
+	//http.Handle("/", http.FileServer(http.Dir("D:\\Vnc\\anjian_script\\")))
+	http.Handle("/", http.FileServer(http.Dir("D:\\测试下载\\serverFile")))
 	fmt.Printf("文件共享服务开启, 请使用浏览器打开. eg: http://%s:8090\n", address[1])
 	go func() {
 		time.Sleep(2000)

@@ -6,6 +6,7 @@ target/
 *.iml
 *.class
 *.exe
+*.local
 */**/.*
 */**/.*/
 */**/*.yml
