@@ -21,7 +21,7 @@ import (
 	learn from https://github.com/monkeyWie/gopeed-core
 */
 const (
-	DOWNLOAD_URL = ""
+	DOWNLOAD_URL = "http://127.0.0.1:8899/demo.zip"
 	SAVE_PATH    = "D:\\测试下载\\download"
 	CON          = 8
 	RETRY_COUNT  = 5
@@ -36,7 +36,7 @@ func main() {
 		return
 	}
 
-	// 创建文件
+	// 创建文件, todo...创建目录
 	file, err := touch(filepath.Join(SAVE_PATH, res.Files[0].Name), res.TotalSize)
 	if err != nil {
 		log.Error(err)
@@ -259,7 +259,7 @@ func fetchChunk(ctx context.Context, res *mdl.Resource, file *os.File, index int
 				if n > 0 {
 					_, err := file.WriteAt(buf[:n], ck.Begin+ck.Downloaded)
 					if err != nil {
-						// todo...确认是否返回重试
+						// 文件出错不重试
 						return false, err
 					}
 					downloaded += int64(n)

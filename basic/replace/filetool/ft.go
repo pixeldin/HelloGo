@@ -2,6 +2,7 @@ package filetool
 
 import (
 	"os"
+	"path/filepath"
 )
 
 func PathExists(path string) (bool, error) {
@@ -22,4 +23,8 @@ func CreateDir(path string) error {
 
 func MoveFile(src, tar string) error {
 	return os.Rename(src, tar)
+}
+
+func GetFileNameFromUrl(url string) string {
+	return filepath.Base(url)
 }

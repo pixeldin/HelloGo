@@ -6,12 +6,13 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 )
 
 const (
-	SAVE_DIR             = "C:\\Jx3Clients\\"
-	DOWN_LOAD_PATH       = ""
+	SAVE_DIR             = "D:\\测试下载\\download"
+	DOWN_LOAD_LINK       = "http://127.0.0.1:8899/demo.zip"
 	CLIENT_PATH          = "C:\\JX3HDBeta\\bin\\zhcn_hd\\bin64\\"
 	EXE_NAME             = "JX3ClientX64.exe"
 	BK_EXE_NAME          = "JX3ClientX64_bk.exe"
@@ -68,13 +69,13 @@ func downloadWithRetry() {
 
 // 同步下载
 func download() error {
-	util.PrintInfo("开始下载: %s", DOWN_LOAD_PATH)
-	res, err := http.Get(DOWN_LOAD_PATH)
+	util.PrintInfo("开始下载: %s", DOWN_LOAD_LINK)
+	res, err := http.Get(DOWN_LOAD_LINK)
 	if err != nil {
 		panic(err)
 		//return err
 	}
-	f, err := os.Create(SAVE_DIR + "JX3ClientX64.exe")
+	f, err := os.Create(filepath.Join(SAVE_DIR, filetool.GetFileNameFromUrl(DOWN_LOAD_LINK)))
 	defer func() {
 		res.Body.Close()
 		f.Close()
@@ -85,7 +86,7 @@ func download() error {
 		panic(err)
 	}
 	io.Copy(f, res.Body)
-	util.PrintInfo("下载完成: %s ", DOWN_LOAD_PATH)
+	util.PrintInfo("下载完成: %s ", DOWN_LOAD_LINK)
 	return nil
 }
 
@@ -94,7 +95,7 @@ func downloadWithCh(i int) (chan error, chan struct{}) {
 	errCh := make(chan error)
 	retCh := make(chan struct{})
 	go func() {
-		util.PrintInfo("开始下载: %s", DOWN_LOAD_PATH)
+		util.PrintInfo("开始下载: %s", DOWN_LOAD_LINK)
 
 		var err error
 		var res = new(http.Response)
@@ -105,13 +106,13 @@ func downloadWithCh(i int) (chan error, chan struct{}) {
 		//	errCh <- errors.New("mock err")
 		//	return
 		//}
-		res, err = http.Get(DOWN_LOAD_PATH)
+		res, err = http.Get(DOWN_LOAD_LINK)
 		defer res.Body.Close()
 		if err != nil {
 			errCh <- err
 			f.Close()
 		}
-		f, err = os.Create(SAVE_DIR + "JX3ClientX64.exe")
+		f, err = os.Create(filepath.Join(SAVE_DIR, filetool.GetFileNameFromUrl(DOWN_LOAD_LINK)))
 		//defer func() {
 		//	if cerr := f.Close(); cerr != nil {
 		//		util.PrintError("Close file err: %v", cerr)
@@ -124,7 +125,7 @@ func downloadWithCh(i int) (chan error, chan struct{}) {
 			//return
 		}
 		io.Copy(f, res.Body)
-		util.PrintInfo("下载完成: %s ", DOWN_LOAD_PATH)
+		util.PrintInfo("下载完成: %s ", DOWN_LOAD_LINK)
 		//f.Sync()
 		f.Close()
 		retCh <- struct{}{}
