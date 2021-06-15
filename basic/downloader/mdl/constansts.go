@@ -1,5 +1,15 @@
 package mdl
 
+type Status int
+
+const (
+	DownloadStatusReady Status = iota
+	DownloadStatusStart
+	DownloadStatusPause
+	DownloadStatusError
+	DownloadStatusDone
+)
+
 const (
 	HttpCodeOK             = 200
 	HttpCodePartialContent = 206
