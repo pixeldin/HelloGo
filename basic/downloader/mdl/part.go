@@ -1,9 +1,10 @@
 package mdl
 
 type Chunk struct {
-	Status     Status
-	Begin      int64
-	End        int64
+	Status Status
+	Begin  int64
+	End    int64
+	// 已下载字节数量, 后续更新, 用于断点续传
 	Downloaded int64
 }
 

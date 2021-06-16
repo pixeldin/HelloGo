@@ -214,8 +214,7 @@ func fetchChunk(ctx context.Context, res *mdl.Resource, file *os.File, index int
 	var (
 		client = http.DefaultClient
 		buf    = make([]byte, 8192)
-		// 已下载字节数量, 后续更新, 用于断点续传
-		downloaded int64
+		//downloaded int64
 	)
 	/**************重试区间开始**************/
 	// 根据是否分块下载设置header
@@ -230,9 +229,10 @@ func fetchChunk(ctx context.Context, res *mdl.Resource, file *os.File, index int
 		var resp *http.Response
 		if res.Range {
 			req.Header.Set(mdl.HttpHeaderRange,
-				fmt.Sprintf(mdl.HttpHeaderRangeFormat, chk[index].Begin+downloaded, chk[index].End))
+				fmt.Sprintf(mdl.HttpHeaderRangeFormat, chk[index].Begin+ck.Downloaded, chk[index].End))
 		} else {
-			downloaded = 0
+			// 单连接重试没有断点续传
+			ck.Downloaded = 0
 		}
 
 		// 获取字节区间
@@ -262,7 +262,8 @@ func fetchChunk(ctx context.Context, res *mdl.Resource, file *os.File, index int
 						// 文件出错不重试
 						return false, err
 					}
-					downloaded += int64(n)
+					// 记录已下载, 用于断点续传
+					ck.Downloaded += int64(n)
 				}
 				if err != nil {
 					// err from read
