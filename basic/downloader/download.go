@@ -2,6 +2,7 @@ package main
 
 import (
 	"HelloGo/basic/downloader/mdl"
+	"HelloGo/basic/replace/filetool"
 	"context"
 	"errors"
 	"fmt"
@@ -36,7 +37,16 @@ func main() {
 		return
 	}
 
-	// 创建文件, todo...创建目录
+	// todo...逐层创建目录
+	if exist, _ := filetool.PathExists(SAVE_PATH); !exist {
+		err := filetool.CreateDir(SAVE_PATH)
+		if err != nil {
+			log.Error(err)
+			return
+		}
+	}
+
+	// 创建文件
 	file, err := touch(filepath.Join(SAVE_PATH, res.Files[0].Name), res.TotalSize)
 	if err != nil {
 		log.Error(err)
@@ -45,38 +55,38 @@ func main() {
 
 	var (
 		// 切分文件块
-		chunk []*mdl.Chunk
+		chunks []*mdl.Chunk
 		// 切分块数
-		chunkSize int
+		ckTol int
 	)
 	// 支持切分
 	if res.Range {
-		chunkSize = CON
-		chunk = make([]*mdl.Chunk, chunkSize)
-		partSize := res.TotalSize / int64(chunkSize)
-		for i := 0; i < chunkSize; i++ {
+		ckTol = CON
+		chunks = make([]*mdl.Chunk, ckTol)
+		partSize := res.TotalSize / int64(ckTol)
+		for i := 0; i < ckTol; i++ {
 			var (
 				begin = partSize * int64(i)
 				end   int64
 			)
-			if i == (chunkSize - 1) {
+			if i == (ckTol - 1) {
 				end = res.TotalSize - 1
 			} else {
 				end = begin + partSize - 1
 			}
 			ck := mdl.NewChunk(begin, end)
-			chunk[i] = ck
+			chunks[i] = ck
 		}
 	} else {
-		chunkSize = 1
+		ckTol = 1
 		// 单连接下载
-		chunk = make([]*mdl.Chunk, chunkSize)
-		chunk[0] = mdl.NewChunk(0, 0)
+		chunks = make([]*mdl.Chunk, ckTol)
+		chunks[0] = mdl.NewChunk(0, 0)
 	}
 
 	// 下载
 	var doneCh = make(chan error, 1)
-	fetch(ctx, res, file, chunk, chunkSize, doneCh)
+	fetch(ctx, res, file, chunks, ckTol, doneCh)
 
 	// wait for done
 	if err := <-doneCh; err != nil {
@@ -127,10 +137,11 @@ func resolve(ctx context.Context, reqURL string) (*mdl.Resource, error) {
 	} else {
 		return nil, errors.New("Unknown file status")
 	}
-	// 解析文件名
 	file := &mdl.FileInfo{
 		Size: res.TotalSize,
 	}
+
+	// 解析文件名
 	// 从header获取文件名
 	conDpsi := resp.Header.Get(mdl.HttpHeaderContentDisposition)
 	if conDpsi != "" {
@@ -205,8 +216,8 @@ func fetch(ctx context.Context, res *mdl.Resource, file *os.File, chks []*mdl.Ch
 	return
 }
 
-func fetchChunk(ctx context.Context, res *mdl.Resource, file *os.File, index int, chk []*mdl.Chunk) (err error) {
-	ck := chk[index]
+func fetchChunk(ctx context.Context, res *mdl.Resource, file *os.File, index int, chks []*mdl.Chunk) (err error) {
+	ck := chks[index]
 	req, err := buildReq(ctx, DOWNLOAD_URL)
 	if err != nil {
 		return err
@@ -214,7 +225,6 @@ func fetchChunk(ctx context.Context, res *mdl.Resource, file *os.File, index int
 	var (
 		client = http.DefaultClient
 		buf    = make([]byte, 8192)
-		//downloaded int64
 	)
 	/**************重试区间开始**************/
 	// 根据是否分块下载设置header
@@ -229,7 +239,7 @@ func fetchChunk(ctx context.Context, res *mdl.Resource, file *os.File, index int
 		var resp *http.Response
 		if res.Range {
 			req.Header.Set(mdl.HttpHeaderRange,
-				fmt.Sprintf(mdl.HttpHeaderRangeFormat, chk[index].Begin+ck.Downloaded, chk[index].End))
+				fmt.Sprintf(mdl.HttpHeaderRangeFormat, chks[index].Begin+ck.Downloaded, chks[index].End))
 		} else {
 			// 单连接重试没有断点续传
 			ck.Downloaded = 0
