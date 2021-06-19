@@ -9,7 +9,7 @@ import (
 //通知管道
 var sig = make(chan bool)
 
-func main()  {
+func main() {
 	defer fmt.Println("Main routines exit!")
 	//FeatureExit()
 	ExitBySignal()
@@ -18,13 +18,13 @@ func main()  {
 	fmt.Println("Before finished, goroutines num:", runtime.NumGoroutine())
 }
 
-func ExitBySignal()  {
+func ExitBySignal() {
 	go ListenWithSignal()
 	time.Sleep(time.Second)
 }
 
 //利用管道通知协程退出
-func ListenWithSignal()  {
+func ListenWithSignal() {
 	count := 1
 	for {
 		select {
@@ -40,13 +40,13 @@ func ListenWithSignal()  {
 }
 
 // 让子协程自生自灭
-func FeatureExit()  {
+func FeatureExit() {
 	//新起子协程
 	go Spawn()
 	time.Sleep(time.Second)
 }
 
-func Spawn()  {
+func Spawn() {
 	count := 1
 	for {
 		time.Sleep(100 * time.Millisecond)
