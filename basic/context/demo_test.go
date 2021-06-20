@@ -27,7 +27,8 @@ func hardWork(job interface{}) error {
 func requestWork(ctx context.Context, job interface{}) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 	defer cancel()
-	done := make(chan error)
+	// 提供缓冲空间用于hardWork协程块退出
+	done := make(chan error, 1)
 	go func() {
 		done <- hardWork(job)
 	}()
@@ -40,7 +41,7 @@ func requestWork(ctx context.Context, job interface{}) error {
 }
 
 func TestRw(t *testing.T) {
-	const total = 1 //000
+	const total = 1000
 	var wg sync.WaitGroup
 	wg.Add(total)
 	now := time.Now()
@@ -52,6 +53,6 @@ func TestRw(t *testing.T) {
 	}
 	wg.Wait()
 	fmt.Println("elapsed:", time.Since(now))
-	time.Sleep(time.Second * 2)
+	time.Sleep(time.Second * 3)
 	fmt.Println("number of goroutines:", runtime.NumGoroutine())
 }
