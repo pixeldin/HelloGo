@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"golang.org/x/sync/errgroup"
@@ -14,15 +15,21 @@ const (
 
 func main() {
 	//runtime.GOMAXPROCS(1)
-	var eg errgroup.Group
-	//eg, errCtx := errgroup.WithContext(context.Background())
+	var eg *errgroup.Group
+	eg, errCtx := errgroup.WithContext(context.Background())
 	for i := 0; i < CON; i++ {
 		i := i
 		eg.Go(func() error {
-			time.Sleep(1 * time.Second)
+			//time.Sleep(1 * time.Second)
 			if i == 3 {
-
-				return errors.New("Mock err!")
+				//time.Sleep(2 * time.Second)
+				return errors.New(fmt.Sprintf("Mock err: %d", i))
+			}
+			select {
+			// 让Done分支判断在Mock err出现后命中, 等待1s
+			case <-time.After(time.Duration(1) * time.Second):
+			case <-errCtx.Done():
+				return errCtx.Err()
 			}
 			fmt.Println(i)
 			return nil
