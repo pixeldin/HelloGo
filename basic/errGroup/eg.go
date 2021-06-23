@@ -20,7 +20,6 @@ func main() {
 	for i := 0; i < CON; i++ {
 		i := i
 		eg.Go(func() error {
-			//time.Sleep(1 * time.Second)
 			if i == 3 {
 				//time.Sleep(2 * time.Second)
 				return errors.New(fmt.Sprintf("Mock err: %d", i))
@@ -38,7 +37,7 @@ func main() {
 
 	// wait for done or err occurs
 	if err := eg.Wait(); err == nil {
-		log.Print("all sounds good.")
+		log.Print("all looks good.")
 	} else {
 		log.Printf("errors occurs: %v", err)
 	}
