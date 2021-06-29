@@ -28,6 +28,7 @@ func main() {
 			// 让Done分支判断在Mock err出现后命中, 等待1s
 			case <-time.After(time.Duration(1) * time.Second):
 			case <-errCtx.Done():
+				log.Printf("meet err in job: %d", i)
 				return errCtx.Err()
 			}
 			fmt.Println(i)

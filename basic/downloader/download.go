@@ -177,6 +177,8 @@ func buildReq(ctx context.Context, reqUrl string) (httpReq *http.Request, err er
 	if ctx != nil {
 		httpReq, err = http.NewRequestWithContext(ctx, method, url.String(), body)
 	} else {
+		// the same as
+		// httpReq, err = http.NewRequestWithContext(context.Background(), method, url.String(), body)
 		httpReq, err = http.NewRequest(method, url.String(), body)
 	}
 	if err != nil {
@@ -196,7 +198,8 @@ func touch(fileName string, size int64) (file *os.File, err error) {
 	return
 }
 
-func fetch(ctx context.Context, res *mdl.Resource, file *os.File, chks []*mdl.Chunk, c int, doneCh chan error) {
+func fetch(ctx context.Context, res *mdl.Resource,
+	file *os.File, chks []*mdl.Chunk, c int, doneCh chan error) {
 	eg, _ := errgroup.WithContext(ctx)
 	for i := 0; i < c; i++ {
 		i := i
