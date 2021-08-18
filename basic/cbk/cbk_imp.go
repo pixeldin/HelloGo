@@ -62,7 +62,7 @@ func (c *CircuitBreakerImp) CanAccess(key string) bool {
 			// 判断是否进入恢复期
 			latency := util.Abs64(time.Now().UnixNano() - api.accessLast)
 			if latency < int64(c.recoverInterval) {
-				// 在恢复期之内, 熔断
+				// 在恢复期之内, 保持熔断
 				return false
 			}
 		}
@@ -90,7 +90,7 @@ func (c *CircuitBreakerImp) Failed(key string) {
 		errRate := float64(api.errCount) / float64(api.totalCount)
 		// 请求数量达到阈值 && 错误率高于熔断界限
 		if api.totalCount > c.minCheck && errRate > c.cbkErrRate {
-			log.Warnf("Cbk start for key: %v", key)
+			log.Warnf("Cbk start for key: %v, errRate: %.3f", key, errRate)
 			api.isPaused = true
 		}
 	} else {

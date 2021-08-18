@@ -44,7 +44,7 @@ func StartJob(cbk *CircuitBreakerImp, reqCh chan int) {
 		select {
 		case <-tk:
 			// reset
-			log.Infof("With %v, Round finished...", cbk.roundInterval)
+			log.Warnf("With %v, Round finished...", cbk.roundInterval)
 		case req := <-reqCh:
 			// req.do
 			ReqForTest(cbk, req)
