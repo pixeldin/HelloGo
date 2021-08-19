@@ -24,20 +24,29 @@ func TestCircuitBreakerImp(t *testing.T) {
 	cbk.cbkErrRate = 0.5
 
 	reqCh := make(chan int, 1)
-	go sendReq(reqCh)
+	recSign := make(chan struct{}, 1)
+	go sendReq(reqCh, recSign)
 	go reportStatus(cbk)
-	StartJob(cbk, reqCh)
+	StartJob(cbk, reqCh, recSign)
 }
 
-func sendReq(recChan chan int) {
+func sendReq(recChan chan int, recoverSign chan struct{}) {
 	for {
-		recChan <- 0
-		// rps with 2
+		//tk := time.Tick(100 * time.Millisecond)
+		select {
+		// 熔断半关闭则尝试一次成功
+		//case <-tk:
+		case <-recoverSign:
+			recChan <- 1
+		default:
+			// 每1秒发10次失败
+			recChan <- 0
+		}
 		time.Sleep(100 * time.Millisecond)
 	}
 }
 
-func StartJob(cbk *CircuitBreakerImp, reqCh chan int) {
+func StartJob(cbk *CircuitBreakerImp, reqCh chan int, recSign chan struct{}) {
 	for {
 		//time.Sleep(time.Second * 1)
 		tk := time.Tick(cbk.roundInterval * time.Second)
@@ -47,7 +56,7 @@ func StartJob(cbk *CircuitBreakerImp, reqCh chan int) {
 			log.Warnf("With %v, Round finished...", cbk.roundInterval)
 		case req := <-reqCh:
 			// req.do
-			ReqForTest(cbk, req)
+			ReqForTest(cbk, req, recSign)
 		}
 	}
 }
@@ -64,7 +73,7 @@ func reportStatus(cbk *CircuitBreakerImp) {
 	}
 }
 
-func ReqForTest(cbk *CircuitBreakerImp, req int) {
+func ReqForTest(cbk *CircuitBreakerImp, req int, recSign chan struct{}) {
 	// mock failed case
 	mockAPI := API_PREFIX + strconv.Itoa(req)
 	log.Infof("Ready to reqForTest: %s", HOST_PREFIX+mockAPI)
@@ -74,11 +83,14 @@ func ReqForTest(cbk *CircuitBreakerImp, req int) {
 		return
 	} else {
 		log.Infof("Continue ReqForTest: %s", HOST_PREFIX+mockAPI)
+		// 通知外部成功一次
+		recSign <- struct{}{}
 	}
 
 	if req == 0 {
 		cbk.Failed(mockAPI)
 	} else {
+		log.Infof("# Meet Success ReqForTest: %s", HOST_PREFIX+mockAPI)
 		cbk.Succeed(mockAPI)
 	}
 
