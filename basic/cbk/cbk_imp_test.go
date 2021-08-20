@@ -3,13 +3,14 @@ package cbk
 import (
 	"HelloGo/basic/cbk/util"
 	log "github.com/sirupsen/logrus"
-	"strconv"
 	"testing"
 	"time"
 )
 
 const HOST_PREFIX = "http://www.abc.com"
-const API_PREFIX = "/fake-api-"
+const API_PREFIX = "/fake-api"
+
+var REC_SIGN = make(chan struct{}, 1)
 
 func TestCircuitBreakerImp(t *testing.T) {
 	log.Infof("Test for cbk: %s", HOST_PREFIX+API_PREFIX)
@@ -19,34 +20,38 @@ func TestCircuitBreakerImp(t *testing.T) {
 	// 10秒一轮
 	cbk.roundInterval = util.ToDuration(10 * time.Second)
 	// 3秒不出现错误恢复
-	cbk.recoverInterval = util.ToDuration(3 * time.Second)
-	cbk.minCheck = 10
+	cbk.recoverInterval = util.ToDuration(2 * time.Second)
+	cbk.minCheck = 5
 	cbk.cbkErrRate = 0.5
 
 	reqCh := make(chan int, 1)
-	recSign := make(chan struct{}, 1)
-	go sendReq(reqCh, recSign)
-	go reportStatus(cbk)
-	StartJob(cbk, reqCh, recSign)
+	// 持续失败
+	go keepFailedReq(reqCh)
+	// 等待成功
+	go waitForSuccess(reqCh)
+	//go reportStatus(cbk)
+	StartJob(cbk, reqCh)
 }
 
-func sendReq(recChan chan int, recoverSign chan struct{}) {
+func waitForSuccess(reqCh chan int) {
 	for {
-		//tk := time.Tick(100 * time.Millisecond)
-		select {
-		// 熔断半关闭则尝试一次成功
-		//case <-tk:
-		case <-recoverSign:
-			recChan <- 1
-		default:
-			// 每1秒发10次失败
-			recChan <- 0
-		}
-		time.Sleep(100 * time.Millisecond)
+		_ = <- REC_SIGN
+		// mock for success
+		log.Warnf("# Mock for success!")
+		reqCh <- 1
+		time.Sleep(1)
 	}
 }
 
-func StartJob(cbk *CircuitBreakerImp, reqCh chan int, recSign chan struct{}) {
+func keepFailedReq(recChan chan int) {
+	for {
+		// 每1秒发2次失败
+		recChan <- 0
+		time.Sleep(500 * time.Millisecond)
+	}
+}
+
+func StartJob(cbk *CircuitBreakerImp, reqCh chan int) {
 	for {
 		//time.Sleep(time.Second * 1)
 		tk := time.Tick(cbk.roundInterval * time.Second)
@@ -56,7 +61,7 @@ func StartJob(cbk *CircuitBreakerImp, reqCh chan int, recSign chan struct{}) {
 			log.Warnf("With %v, Round finished...", cbk.roundInterval)
 		case req := <-reqCh:
 			// req.do
-			ReqForTest(cbk, req, recSign)
+			ReqForTest(cbk, req)
 		}
 	}
 }
@@ -73,18 +78,16 @@ func reportStatus(cbk *CircuitBreakerImp) {
 	}
 }
 
-func ReqForTest(cbk *CircuitBreakerImp, req int, recSign chan struct{}) {
+func ReqForTest(cbk *CircuitBreakerImp, req int) {
 	// mock failed case
-	mockAPI := API_PREFIX + strconv.Itoa(req)
+	mockAPI := API_PREFIX //+ strconv.Itoa(req)
 	log.Infof("Ready to reqForTest: %s", HOST_PREFIX+mockAPI)
 
-	if !cbk.CanAccess(mockAPI) {
+	if !cbk.CanAccess(mockAPI, REC_SIGN) {
 		log.Errorf("Api: %v is break, wait for next round or success for one...", mockAPI)
 		return
 	} else {
 		log.Infof("Continue ReqForTest: %s", HOST_PREFIX+mockAPI)
-		// 通知外部成功一次
-		recSign <- struct{}{}
 	}
 
 	if req == 0 {

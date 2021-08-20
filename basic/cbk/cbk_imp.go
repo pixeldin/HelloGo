@@ -46,7 +46,8 @@ func (c *CircuitBreakerImp) accessed(api *apiSnapShop) {
 }
 
 // CanAccess 判断api是否可访问
-func (c *CircuitBreakerImp) CanAccess(key string) bool {
+//func (c *CircuitBreakerImp) CanAccess(key string) bool {
+func (c *CircuitBreakerImp) CanAccess(key string, revChan chan struct{}) bool {
 	/*
 		判断当前api的isPaused状态
 		- 未熔断, 返回true
@@ -64,6 +65,11 @@ func (c *CircuitBreakerImp) CanAccess(key string) bool {
 			if latency < int64(c.recoverInterval) {
 				// 在恢复期之内, 保持熔断
 				return false
+			} else {
+				// debug for recover 通知外部成功一次
+				log.Warnf("# Cbk recover for api %v keys" +
+					" in new round!", key)
+				revChan <- struct{}{}
 			}
 		}
 	}
@@ -90,7 +96,8 @@ func (c *CircuitBreakerImp) Failed(key string) {
 		errRate := float64(api.errCount) / float64(api.totalCount)
 		// 请求数量达到阈值 && 错误率高于熔断界限
 		if api.totalCount > c.minCheck && errRate > c.cbkErrRate {
-			log.Warnf("Cbk start for key: %v, errRate: %.3f", key, errRate)
+			log.Warnf("Cbk start for key: %v, total: %v, " +
+				"errRate: %.3f", key, api.totalCount, errRate)
 			api.isPaused = true
 		}
 	} else {
@@ -115,6 +122,7 @@ func (c *CircuitBreakerImp) Succeed(key string) {
 	if api, ok := c.apiMap[key]; ok {
 		c.accessed(api)
 		if api.isPaused {
+			log.Warnf("Cbk success for key: %v, unset paused.", key)
 			api.isPaused = false
 		}
 	}
