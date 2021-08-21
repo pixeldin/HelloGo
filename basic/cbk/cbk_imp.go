@@ -36,7 +36,7 @@ func (c *CircuitBreakerImp) accessed(api *apiSnapShop) {
 	*/
 	now := time.Now().UnixNano()
 	if util.Abs64(now-api.roundLast) > int64(c.roundInterval) {
-		log.Warnf("# Cbk reset for all keys in new round!")
+		log.Warnf("# Cbk reset for api in new round!")
 		api.errCount = 0
 		api.totalCount = 0
 		api.roundLast = now
@@ -47,7 +47,7 @@ func (c *CircuitBreakerImp) accessed(api *apiSnapShop) {
 
 // CanAccess 判断api是否可访问
 //func (c *CircuitBreakerImp) CanAccess(key string) bool {
-func (c *CircuitBreakerImp) CanAccess(key string, revChan chan struct{}) bool {
+func (c *CircuitBreakerImp) CanAccess(key string, reqType int, revChan chan struct{}) bool {
 	/*
 		判断当前api的isPaused状态
 		- 未熔断, 返回true
@@ -57,6 +57,7 @@ func (c *CircuitBreakerImp) CanAccess(key string, revChan chan struct{}) bool {
 	*/
 	c.lock.RLock()
 	defer c.lock.RUnlock()
+	log.Warnf("# Cbk check accessable for api id-%v key", reqType)
 	// 从api全局map查找
 	if api, ok := c.apiMap[key]; ok {
 		if api.isPaused {
@@ -66,10 +67,10 @@ func (c *CircuitBreakerImp) CanAccess(key string, revChan chan struct{}) bool {
 				// 在恢复期之内, 保持熔断
 				return false
 			} else {
-				// debug for recover 通知外部成功一次
-				log.Warnf("# Cbk recover for api %v keys" +
-					" in new round!", key)
+				// 度过恢复期 通知外部成功一次
 				revChan <- struct{}{}
+				log.Warnf("# Cbk recover for api %v keys"+
+					" in new round!", key)
 			}
 		}
 	}
@@ -96,7 +97,7 @@ func (c *CircuitBreakerImp) Failed(key string) {
 		errRate := float64(api.errCount) / float64(api.totalCount)
 		// 请求数量达到阈值 && 错误率高于熔断界限
 		if api.totalCount > c.minCheck && errRate > c.cbkErrRate {
-			log.Warnf("Cbk start for key: %v, total: %v, " +
+			log.Warnf("Breaking for key: %v, total: %v, "+
 				"errRate: %.3f", key, api.totalCount, errRate)
 			api.isPaused = true
 		}
@@ -122,7 +123,7 @@ func (c *CircuitBreakerImp) Succeed(key string) {
 	if api, ok := c.apiMap[key]; ok {
 		c.accessed(api)
 		if api.isPaused {
-			log.Warnf("Cbk success for key: %v, unset paused.", key)
+			log.Warnf("# Cbk re-success for key: %v, unset paused.", key)
 			api.isPaused = false
 		}
 	}
