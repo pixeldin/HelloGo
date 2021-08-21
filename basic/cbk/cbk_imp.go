@@ -36,7 +36,7 @@ func (c *CircuitBreakerImp) accessed(api *apiSnapShop) {
 	*/
 	now := time.Now().UnixNano()
 	if util.Abs64(now-api.roundLast) > int64(c.roundInterval) {
-		log.Warnf("# Cbk reset for api in new round!")
+		log.Debugf("# Cbk reset for api in new round!")
 		api.errCount = 0
 		api.totalCount = 0
 		api.roundLast = now
@@ -57,9 +57,12 @@ func (c *CircuitBreakerImp) CanAccess(key string, reqType int, revChan chan stru
 	*/
 	c.lock.RLock()
 	defer c.lock.RUnlock()
-	log.Warnf("# Cbk check accessable for api id-%v key", reqType)
+	log.Debugf("# Cbk check accessable for api id-%v key", reqType)
 	// 从api全局map查找
 	if api, ok := c.apiMap[key]; ok {
+		log.Debugf("# Cbk detail for api id-%v key, total: %v, "+
+			"errCount: %v, paused: %v", reqType, api.totalCount,
+			api.errCount, api.isPaused)
 		if api.isPaused {
 			// 判断是否进入恢复期
 			latency := util.Abs64(time.Now().UnixNano() - api.accessLast)
@@ -68,9 +71,9 @@ func (c *CircuitBreakerImp) CanAccess(key string, reqType int, revChan chan stru
 				return false
 			} else {
 				// 度过恢复期 通知外部成功一次
-				revChan <- struct{}{}
-				log.Warnf("# Cbk recover for api %v keys"+
-					" in new round!", key)
+				//revChan <- struct{}{}
+				log.Debugf("# Overpass interval: %v, Cbk recover"+
+					" for api %v keys in new round!", c.recoverInterval, key)
 			}
 		}
 	}
@@ -97,7 +100,7 @@ func (c *CircuitBreakerImp) Failed(key string) {
 		errRate := float64(api.errCount) / float64(api.totalCount)
 		// 请求数量达到阈值 && 错误率高于熔断界限
 		if api.totalCount > c.minCheck && errRate > c.cbkErrRate {
-			log.Warnf("Breaking for key: %v, total: %v, "+
+			log.Debugf("Breaking for key: %v, total: %v, "+
 				"errRate: %.3f", key, api.totalCount, errRate)
 			api.isPaused = true
 		}
@@ -123,7 +126,7 @@ func (c *CircuitBreakerImp) Succeed(key string) {
 	if api, ok := c.apiMap[key]; ok {
 		c.accessed(api)
 		if api.isPaused {
-			log.Warnf("# Cbk re-success for key: %v, unset paused.", key)
+			log.Debugf("# Cbk re-success for key: %v, unset paused.", key)
 			api.isPaused = false
 		}
 	}
