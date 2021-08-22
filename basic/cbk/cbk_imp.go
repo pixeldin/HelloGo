@@ -36,7 +36,10 @@ func (c *CircuitBreakerImp) accessed(api *apiSnapShop) {
 	*/
 	now := time.Now().UnixNano()
 	if util.Abs64(now-api.roundLast) > int64(c.roundInterval) {
-		log.Debugf("# Cbk reset for api in new round!")
+		if api.roundLast != 0 {
+			// 首次不打log
+			log.Warnf("# Trigger 熔断器窗口关闭，重置API计数!")
+		}
 		api.errCount = 0
 		api.totalCount = 0
 		api.roundLast = now
@@ -45,9 +48,11 @@ func (c *CircuitBreakerImp) accessed(api *apiSnapShop) {
 	api.accessLast = now
 }
 
-// CanAccess 判断api是否可访问
-//func (c *CircuitBreakerImp) CanAccess(key string) bool {
-func (c *CircuitBreakerImp) CanAccess(key string, reqType int, revChan chan struct{}) bool {
+/*
+ CanAccess 判断api是否可访问
+ func (c *CircuitBreakerImp) CanAccess(key string) bool {
+*/
+func (c *CircuitBreakerImp) CanAccess(key string, reqType int) bool {
 	/*
 		判断当前api的isPaused状态
 		- 未熔断, 返回true
@@ -70,10 +75,8 @@ func (c *CircuitBreakerImp) CanAccess(key string, reqType int, revChan chan stru
 				// 在恢复期之内, 保持熔断
 				return false
 			} else {
-				// 度过恢复期 通知外部成功一次
-				//revChan <- struct{}{}
-				log.Debugf("# Overpass interval: %v, Cbk recover"+
-					" for api %v keys in new round!", c.recoverInterval, key)
+				// 度过恢复期
+				log.Warnf("# Trigger: 熔断器度过恢复期: %v, key: %v!", c.recoverInterval, key)
 			}
 		}
 	}
@@ -100,8 +103,8 @@ func (c *CircuitBreakerImp) Failed(key string) {
 		errRate := float64(api.errCount) / float64(api.totalCount)
 		// 请求数量达到阈值 && 错误率高于熔断界限
 		if api.totalCount > c.minCheck && errRate > c.cbkErrRate {
-			log.Debugf("Breaking for key: %v, total: %v, "+
-				"errRate: %.3f", key, api.totalCount, errRate)
+			log.Warnf("# Trigger 达到错误率, 开启熔断！: %v, total: %v, "+
+				"errRate: %.3f.", key, api.totalCount, errRate)
 			api.isPaused = true
 		}
 	} else {
@@ -126,7 +129,7 @@ func (c *CircuitBreakerImp) Succeed(key string) {
 	if api, ok := c.apiMap[key]; ok {
 		c.accessed(api)
 		if api.isPaused {
-			log.Debugf("# Cbk re-success for key: %v, unset paused.", key)
+			log.Warnf("# Trigger API: %v 请求成功，关闭熔断状态.", key)
 			api.isPaused = false
 		}
 	}
