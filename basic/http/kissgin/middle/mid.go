@@ -10,6 +10,8 @@ import (
 
 func HeaderCheck() func(c *gin.Context) {
 	return func(c *gin.Context) {
+		// 获取header的值
+		_ = c.Request.Header
 
 	}
 }

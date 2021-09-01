@@ -1,9 +1,34 @@
 package reflect
 
 import (
+	"io"
+	"os"
 	"reflect"
 	"testing"
 )
+
+var (
+	r io.Reader
+	w io.Writer
+	i interface{}
+)
+
+func TypeTransfer() {
+	file, _ := os.OpenFile("", os.O_CREATE, 0)
+	r = file
+
+	// 编译失败
+	// w = r
+	// 类型断言
+	var ok bool
+	if w, ok = r.(io.Writer); !ok {
+		panic("类型转换失败")
+	}
+
+	// 任意类型转interface{}无需断言
+	i = ok
+
+}
 
 /*
 	可设置(settability)有一点像地址可达(addressability), 这是一个反射对象可以修改实际创建该反射对象的值的属性,
