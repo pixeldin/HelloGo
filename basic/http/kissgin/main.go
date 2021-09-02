@@ -5,8 +5,8 @@ import (
 	"HelloGo/basic/http/kissgin/model"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"os"
+	"time"
 )
 
 func init() {
@@ -16,15 +16,22 @@ func init() {
 	}
 }
 
+var (
+	H_KEY = "h-key"
+)
+
 func main() {
 	r := gin.Default()
 	//r.Use(middle.HeaderCheck(), middle.ReqCheck())
 
 	r.POST("/hello", helloFunc)
-	// 中间件校验header
-	r.POST("/hello-with-header", middle.HeaderCheck(), helloFunc)
-	// 中间件检测请求体
+	// 校验header
+	r.POST("/hello-with-header", middle.HeaderCheck(H_KEY), helloFunc)
+	// 检测请求体
 	r.POST("/hello-with-req", middle.ReqCheck(model.PingReq{}), helloFunc)
+
+	// todo... 接口缓存cache, 对相同uri,相同参数生效
+	r.POST("/hello-with-cache", middle.CacheForReq(5*time.Minute, helloFunc))
 
 	e := r.Run()
 	fmt.Printf("Server stop with err: %v\n", e)
@@ -32,6 +39,6 @@ func main() {
 
 func helloFunc(c *gin.Context) {
 	const TAG = "PingPong"
-	c.JSON(http.StatusOK, model.SimpleResponse(200, TAG))
+	c.JSON(model.Success, model.SimpleResponse(200, TAG))
 	return
 }

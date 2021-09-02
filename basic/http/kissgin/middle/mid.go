@@ -8,11 +8,17 @@ import (
 	"reflect"
 )
 
-func HeaderCheck() func(c *gin.Context) {
+func HeaderCheck(key string) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		// 获取header的值
-		_ = c.Request.Header
-
+		kh := c.GetHeader(key)
+		if kh == "" {
+			// header缺失
+			c.JSON(http.StatusOK, &model.Response{Code: model.Unknown, Msg: "lacking necessary header"})
+			c.Abort()
+			return
+		}
+		c.Next()
 	}
 }
 
