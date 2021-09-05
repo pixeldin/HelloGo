@@ -2,6 +2,7 @@ package main
 
 import (
 	"HelloGo/basic/http/kissgin/middle"
+	"HelloGo/basic/http/kissgin/middle/cache"
 	"HelloGo/basic/http/kissgin/model"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -31,7 +32,7 @@ func main() {
 	r.POST("/hello-with-req", middle.ReqCheck(model.PingReq{}), helloFunc)
 
 	// todo... 接口缓存cache, 对相同uri,相同参数生效
-	r.POST("/hello-with-cache", middle.CacheForReq(5*time.Minute, helloFunc))
+	r.POST("/hello-with-cache", cache.CacheForReq(5*time.Minute, helloFunc))
 
 	e := r.Run()
 	fmt.Printf("Server stop with err: %v\n", e)
