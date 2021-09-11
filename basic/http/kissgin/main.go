@@ -1,9 +1,10 @@
 package main
 
 import (
+	"HelloGo/basic/http/kissgin/bizmod"
 	"HelloGo/basic/http/kissgin/middle"
 	"HelloGo/basic/http/kissgin/middle/cache"
-	"HelloGo/basic/http/kissgin/model"
+	comdel "HelloGo/common/model"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"os"
@@ -29,7 +30,7 @@ func main() {
 	// 校验header
 	r.POST("/hello-with-header", middle.HeaderCheck(H_KEY), helloFunc)
 	// 检测请求体
-	r.POST("/hello-with-req", middle.ReqCheck(model.PingReq{}), helloFunc)
+	r.POST("/hello-with-req", middle.ReqCheck(bizmod.PingReq{}), helloFunc)
 
 	// todo... 接口缓存cache, 对相同uri,相同参数生效
 	r.POST("/hello-with-cache", cache.CacheForReq(5*time.Minute, helloFunc))
@@ -40,6 +41,6 @@ func main() {
 
 func helloFunc(c *gin.Context) {
 	const TAG = "PingPong"
-	c.JSON(model.Success, model.SimpleResponse(200, TAG))
+	c.JSON(comdel.Success, comdel.SimpleResponse(200, TAG))
 	return
 }

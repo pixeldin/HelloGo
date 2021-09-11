@@ -1,7 +1,7 @@
 package middle
 
 import (
-	"HelloGo/basic/http/kissgin/model"
+	comdel "HelloGo/common/model"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"net/http"
@@ -14,7 +14,7 @@ func HeaderCheck(key string) func(c *gin.Context) {
 		kh := c.GetHeader(key)
 		if kh == "" {
 			// header缺失
-			c.JSON(http.StatusOK, &model.Response{Code: model.Unknown, Msg: "lacking necessary header"})
+			c.JSON(http.StatusOK, &comdel.Response{Code: comdel.Unknown, Msg: "lacking necessary header"})
 			c.Abort()
 			return
 		}
@@ -39,7 +39,7 @@ func ReqCheck(reqVal interface{}) func(ctx *gin.Context) {
 			// 类型校验
 			if err := c.ShouldBindBodyWith(req, binding.JSON); err != nil {
 				// 结构体绑定出错
-				c.JSON(http.StatusOK, model.NewBindFailedResponse(tag))
+				c.JSON(http.StatusOK, comdel.NewBindFailedResponse(tag))
 				// 终止执行链
 				c.Abort()
 				return

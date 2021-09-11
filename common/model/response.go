@@ -13,6 +13,15 @@ type Response struct {
 	Data interface{} `json:"data"`
 }
 
+func NewDataResponse(data interface{}, tag string) *Response {
+	var r Response
+	r.Msg = "success"
+	r.Code = Success
+	r.Data = data
+	r.Tag = tag
+	return &r
+}
+
 func SimpleResponse(code int, msg string) *Response {
 	var r Response
 	r.Msg = msg
