@@ -32,3 +32,17 @@ func SimpleResponse(code int, msg string) *Response {
 func NewBindFailedResponse(tag string) *Response {
 	return &Response{Code: WrongArgs, Msg: "wrong argument", Tag: tag}
 }
+
+func NewErrorResponse(err error, tag ...interface{}) *Response {
+	var r Response
+	r.Msg = "unknown error"
+	if err != nil {
+		r.Msg = err.Error()
+	}
+	switch len(tag) {
+	case 1:
+		r.Tag = tag[0].(string)
+	}
+	r.Code = Unknown
+	return &r
+}

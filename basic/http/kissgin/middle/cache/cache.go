@@ -1,7 +1,12 @@
 package cache
 
 import (
+	"HelloGo/common/model"
+	"bytes"
+	"encoding/json"
+	"errors"
 	"github.com/gin-gonic/gin"
+	"io"
 	"net/http"
 	"time"
 )
@@ -24,11 +29,47 @@ type cacheWrite struct {
 
 var _ gin.ResponseWriter = &cacheWrite{}
 
-func CacheForReq(expire time.Duration, handle gin.HandlerFunc) gin.HandlerFunc {
-	return func(context *gin.Context) {
-		// 从context获取请求体, 从store中判断缓存是否命中
-		// - 命中, 返回
-		// - 不命中, 执行handler并写入缓存
-		handle(context)
+func CacheForReq(store CacheStore, expire time.Duration, handle gin.HandlerFunc) gin.HandlerFunc {
+	return func(ginCtx *gin.Context) {
+		/*
+			拼装业务key
+			从context获取请求体, 从store中根据key判断缓存是否命中
+			- 命中, 返回
+			- 不命中, 执行handler并写入缓存
+		*/
+		var (
+			tryCache respCache
+		)
+		// todo... 拼接key
+		url := ginCtx.Request.URL
+		bodyStr := dumpForBody(ginCtx.Request)
+		key := url.RequestURI() + ":" + bodyStr
+		if err := store.Get(key, &tryCache); err != nil {
+			// 未命中
+			handle(ginCtx)
+		} else {
+			resp := model.Response{}
+			if err := json.Unmarshal(tryCache.Data, &resp); err != nil {
+				ginCtx.JSON(model.Unknown, model.NewErrorResponse(errors.New("cache unmarshal failed")))
+				return
+			}
+			ginCtx.JSON(http.StatusOK, &resp)
+		}
 	}
+}
+
+// dumpForBody
+// 从request体(ReadCloser)导出body str
+func dumpForBody(request *http.Request) string {
+	var bout bytes.Buffer
+	if request.Body != nil {
+		_, err := io.Copy(&bout, request.Body)
+		if err != nil {
+
+		}
+		request.Body.Close()
+	}
+	// todo... fixme for correct key
+	body := bout.String()
+	return body
 }
