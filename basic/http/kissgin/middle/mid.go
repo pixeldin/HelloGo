@@ -24,9 +24,10 @@ func HeaderCheck(key string) func(c *gin.Context) {
 
 func ReqCheck(reqVal interface{}) func(ctx *gin.Context) {
 	var reqType reflect.Type = nil
-	// 运行时: 拿到校验体原始类型
+
 	if reqVal != nil {
 		value := reflect.Indirect(reflect.ValueOf(reqVal))
+		// 运行时: 拿到校验体原始类型
 		reqType = value.Type()
 	}
 

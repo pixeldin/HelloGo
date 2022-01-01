@@ -3,7 +3,6 @@ module HelloGo
 go 1.12
 
 require (
-	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.7.0
 	github.com/golang/protobuf v1.3.5
 	github.com/gomodule/redigo v0.0.0-20190822095346-d3876d43bbbe
@@ -14,13 +13,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/obase/conf v1.6.0
 	github.com/sirupsen/logrus v0.0.0-20190807103436-de736cf91b92
-	github.com/ugorji/go v1.1.7 // indirect
-	golang.org/x/lint v0.0.0-20190313153728-d0100b6bd8b3 // indirect
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
-	golang.org/x/tools v0.0.0-20190524140312-2c0ae7006135 // indirect
 	google.golang.org/grpc v1.29.1
-	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
-	honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc // indirect
 )

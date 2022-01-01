@@ -28,6 +28,7 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		time.Sleep(time.Second * 10)
 		fmt.Fprint(w, "Hello World")
+		// diff
 	})
 
 	// 启动监听
