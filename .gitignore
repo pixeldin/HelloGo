@@ -13,6 +13,7 @@ target/
 */**/*.iml
 */**/*.class
 /vendor/*
+/vendor
 !/vendor/vendor.json
 go.sum
 !.gitignore
